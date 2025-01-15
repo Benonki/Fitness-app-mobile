@@ -5,7 +5,6 @@ import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 
 const NOTIFICATION_STORAGE_KEY = '@notification';
-const PUSH_TOKEN_STORAGE_KEY = '@expoPushToken';
 const NotificationsContext = createContext();
 
 Notifications.setNotificationHandler({
@@ -16,9 +15,11 @@ Notifications.setNotificationHandler({
   }),
 });
 
+
 export const NotificationsProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const [expoPushToken, setExpoPushToken] = useState("");
+    
 
   const loadNotifications = async () => {
     try {
@@ -31,6 +32,7 @@ export const NotificationsProvider = ({ children }) => {
     }
   };
 
+
   const saveNotifications = async (updatedNotifications) => {
     try {
       await AsyncStorage.setItem(NOTIFICATION_STORAGE_KEY, JSON.stringify(updatedNotifications));
@@ -38,6 +40,7 @@ export const NotificationsProvider = ({ children }) => {
       console.error('Błąd zapisywania powiadomień:', error);
     }
   };
+
 
   const addNotification = (newNotification) => {
     setNotifications((prevNotifications) => {
@@ -47,6 +50,7 @@ export const NotificationsProvider = ({ children }) => {
     });
   };
 
+
   const deleteNotification = (notificationId) => {
     setNotifications((prevNotifications) => {
       const updatedNotifications = prevNotifications.filter((notification) => notification.id !== notificationId);
@@ -55,7 +59,7 @@ export const NotificationsProvider = ({ children }) => {
     });
   };
 
-  const registerForPushNotificationsAsync = async () => {
+  async function registerForPushNotificationsAsync() {
     let token;
 
     if (Platform.OS === "android") {
@@ -68,46 +72,39 @@ export const NotificationsProvider = ({ children }) => {
     }
 
     if (Device.isDevice) {
-      const storedToken = await AsyncStorage.getItem(PUSH_TOKEN_STORAGE_KEY);
-      if (storedToken) {
-        token = storedToken;
-      } else {
-        const { status: existingStatus } = await Notifications.getPermissionsAsync();
-        let finalStatus = existingStatus;
-        if (existingStatus !== "granted") {
-          const { status } = await Notifications.requestPermissionsAsync();
-          finalStatus = status;
-        }
-        if (finalStatus !== "granted") {
-          alert("Failed to get push token for push notification!");
-          return;
-        }
-        
-        token = (
-          await Notifications.getExpoPushTokenAsync({
-            projectId: "95993090-4fd8-4f38-a179-0c7924bd9f87",
-          })
-        ).data;
-
-        await AsyncStorage.setItem(PUSH_TOKEN_STORAGE_KEY, token);
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
       }
+      if (finalStatus !== "granted") {
+        alert("Failed to get push token for push notification!");
+        return;
+      }
+
+      token = (
+        await Notifications.getExpoPushTokenAsync({
+          projectId: "4f9e05d8-748c-4e62-bca4-696d021a91ad",
+        })
+      ).data;
     } else {
       alert("Must use physical device for Push Notifications");
     }
 
     return token;
-  };
+  }
 
-  const sendNotification = async (newNotification) => {
-    if (!expoPushToken) return;
+  const sendNotification = async (newNotification) =>{
 
     const message = {
       to: expoPushToken,
       title: newNotification.title,
       body: newNotification.message,
-    };
+    }
 
-    await fetch("https://exp.host/--/api/v2/push/send", {
+    await fetch("https://exp.host/--/api/v2/push/send",{
       method: "POST",
       headers: {
         host: "exp.host",
@@ -117,15 +114,15 @@ export const NotificationsProvider = ({ children }) => {
       },
       body: JSON.stringify(message),
     });
-  };
+
+
+  }
 
   useEffect(() => {
     loadNotifications();
-    registerForPushNotificationsAsync()
-      .then((token) => {
-        setExpoPushToken(token);
-      })
-      .catch((err) => console.error(err));
+    registerForPushNotificationsAsync().then((token) => {
+      setExpoPushToken(token);
+    }).catch((err) => console.log(err));
   }, []);
 
   return (
@@ -134,6 +131,7 @@ export const NotificationsProvider = ({ children }) => {
     </NotificationsContext.Provider>
   );
 };
+
 
 export const useNotifications = () => {
   return useContext(NotificationsContext);
