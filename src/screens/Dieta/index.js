@@ -13,9 +13,11 @@ const DietaScreen = ({ navigation }) => {
     const { stepCount, pedometerAvailability } = useContext(StepContext);
     const [maxSteps, setMaxSteps] = useState(0);
     const { getTotalNutrients } = useContext(ProductContext);
-
-    const [goalReached, setGoalReached] = useState(false);
-    const {addNotification} = useNotifications();
+    const [ maxCalories, setMaxCalories ] = useState(0);
+    const [stepGoalReached, setStepGoalReached] = useState(false);
+    const [caloriesGoalReached, setCaloriesGoalReached] = useState(false);
+    const [isDataLoaded, setIsDataLoaded] = useState(false);
+    const {addNotification, sendNotification} = useNotifications();
     
     useEffect(() => {
         const loadUserData = async () => {
@@ -27,6 +29,8 @@ const DietaScreen = ({ navigation }) => {
 
                     if (user) {
                         setMaxSteps(user.kroki);
+                        //setMaxCalories(user.kalorie);
+                        setIsDataLoaded(true);
                     }
                 }
             } catch (error) {
@@ -45,15 +49,35 @@ const DietaScreen = ({ navigation }) => {
     
     // Sprawdzenie czy osiągnięto cel kroków
     useEffect(() => {
-        if (stepCount >= 10 && !goalReached) {
-            addNotification({
+
+        if(!isDataLoaded) {
+            return;
+        }
+        if (stepCount >= 10 && !stepGoalReached) { // zmienić na maxSteps
+            var newNotification = {
                 id: new Date().getTime(),
                 title: "Gratulacje! :D",
                 message: "Osiągnąłeś swój cel kroków!!!"
-            });
-            setGoalReached(true);
+            }
+
+            addNotification(newNotification);
+            //sendNotification(newNotification);
+            setStepGoalReached(true);
         }
-    }, [stepCount, goalReached, addNotification]);
+
+        if(consumedCalories >= 2000  && !caloriesGoalReached){ // zmienić na maxCalories
+            var newNotification = {
+                id: new Date().getTime(),
+                title: "Gratulacje! :D",
+                message: "Osiągnąłeś swój cel kalorii!!!"
+            }
+
+            addNotification(newNotification);
+            //sendNotification(newNotification);
+            setCaloriesGoalReached(true);
+        }
+        
+    }, [stepCount, stepGoalReached, caloriesGoalReached, addNotification]);
 
     return (
         <View style={styles.container}>

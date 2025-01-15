@@ -7,6 +7,7 @@ import styles from './StyleSheet.js';
 import config from '../../../JsonIpConfig.js';
 import * as ImagePicker from 'expo-image-picker';
 import { Image } from 'react-native';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const ProfilScreen = ({ navigation }) => {
     const [userData, setUserData] = useState(null);
@@ -14,6 +15,22 @@ const ProfilScreen = ({ navigation }) => {
     const [gender, setGender] = useState('');
     const [goal, setGoal] = useState('');
     const [image, setImage] = useState(null);
+    const [visibilityDatePicker, sertVisibilityDatePicker] = useState(false);
+
+    const showDatePicker = () => {
+        sertVisibilityDatePicker(true);
+      };
+    
+    const hideDatePicker = () => {
+        sertVisibilityDatePicker(false);
+      };
+    
+    const handleDateConfirm = (date) => {
+        const formattedDate = date.toLocaleDateString('pl-PL');
+        handleChange('dataUr', formattedDate);
+        hideDatePicker();
+    };
+    
 
     const pickImage = async() =>{
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -254,13 +271,22 @@ const ProfilScreen = ({ navigation }) => {
                     </View>
 
                     <View style={styles.inputWrapper}>
-                        <Text>Data Urodzenia:</Text>
-                        <TextInput
-                            style={styles.inputInfo}
-                            value={userData.dataUr}
-                            onChangeText={(text) => handleChange('dataUr', text)}
-                        />
-                    </View>
+                    <Text>Data urodzenia:</Text>
+                    <TouchableOpacity onPress={showDatePicker} style={styles.inputInfo}>
+                        <Text>
+                            {userData.dataUr ? userData.dataUr : 'Wybierz datę'}
+                        </Text>
+                    </TouchableOpacity>
+                    <DateTimePickerModal
+                        isVisible={visibilityDatePicker}
+                        mode="date"
+                        onConfirm={(date) => {
+                            handleDateConfirm(date);
+                        }}
+                        onCancel={hideDatePicker}
+                    />
+                </View>
+
                 </View>
 
                 <View style={styles.bmiContainer}>

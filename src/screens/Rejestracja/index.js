@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, TextInput, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView } from 'react-native';
+import { View, TextInput, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Keyboard } from 'react-native';
 import { Snackbar, Checkbox } from 'react-native-paper';
 import Svg, { Defs, LinearGradient as SvgLinearGradient, Stop, Text as SvgText } from 'react-native-svg';
 import { Picker } from '@react-native-picker/picker';
 import styles from './StyleSheet.js';
 import axios from 'axios';
 import config from '../../../JsonIpConfig.js';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const RejestracjaScreen = ({ navigation }) => {
     const [userData, setUserData] = useState({
@@ -23,9 +24,26 @@ const RejestracjaScreen = ({ navigation }) => {
         iloscTr: '',
         imageUri: "",
     });
+    
     const [acceptedTerms, setAcceptedTerms] = useState(false);
     const [visible, setVisible] = useState(false);
     const [message, setMessage] = useState('');
+    const [visibilityDatePicker, setVisibilityDatePicker] = useState(false);
+
+    const showDatePicker = () => {
+        Keyboard.dismiss();
+        setVisibilityDatePicker(true);
+    };
+
+    const hideDatePicker = () => {
+        setVisibilityDatePicker(false);
+    };
+
+    const handleDateConfirm = (date) => {
+        const formattedDate = date.toLocaleDateString('pl-PL');
+        setUserData({ ...userData, dataUr: formattedDate });
+        hideDatePicker();
+    };
 
     const isLoginAvailable = async (login) => {
         try {
@@ -130,7 +148,13 @@ const RejestracjaScreen = ({ navigation }) => {
                 <TextInput style={styles.input} placeholder="Waga (kg)" keyboardType="numeric" value={userData.waga} onChangeText={(value) => setUserData({ ...userData, waga: value })} />
                 <TextInput style={styles.input} placeholder="Wzrost (cm)" keyboardType="numeric" value={userData.wzrost} onChangeText={(value) => setUserData({ ...userData, wzrost: value })} />
                 <TextInput style={styles.input} placeholder="Cel kroków" keyboardType="numeric" value={userData.kroki} onChangeText={(value) => setUserData({ ...userData, kroki: value })} />
-                <TextInput style={styles.input} placeholder="Data Urodzenia (DD-MM-YYYY)" value={userData.dataUr} onChangeText={(value) => setUserData({ ...userData, dataUr: value })} />
+                <TextInput style={styles.input} placeholder="Data Urodzenia (DD-MM-YYYY)" value={userData.dataUr} onFocus={showDatePicker} caretHidden={true} />
+                    <DateTimePickerModal
+                        isVisible={visibilityDatePicker}
+                        mode="date"
+                        onConfirm={handleDateConfirm}
+                        onCancel={hideDatePicker}
+                    />
                 <TextInput style={styles.input} placeholder="Liczba treningów w tygodniu" keyboardType="numeric" value={userData.iloscTr} onChangeText={(value) => setUserData({ ...userData, iloscTr: value })} />
 
                 <View style={styles.pickerWrapper}>

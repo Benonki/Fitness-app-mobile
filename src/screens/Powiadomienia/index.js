@@ -13,8 +13,8 @@ const PowiadomieniaScreen = () => {
     const handleAddNotification = () =>{
         var newNotification = {
             id: new Date().getTime(),
-            title: "NOWE",
-            message: "NOWE INFO MORDO"
+            title: "Nowe powadomienie",
+            message: "Informacja powiadomienia"
         }
         addNotification(newNotification);
     }
