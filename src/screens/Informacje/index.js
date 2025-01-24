@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, Image, ScrollView, TouchableOpacity, Modal, TextInput, Alert } from 'react-native';
+import { useContext, useState } from 'react';
 import styles from './StyleSheet.js';
-import { ProductContext } from '../../context/ProductContext/index.js';
-import { useContext } from 'react';
+import { ProductContext } from '../../context/ProductContext';
 
 const NUTRI_SCORE_IMAGES = {
   a: require('../../../assets/NtrScore/nutriScoreA.png'),
@@ -16,12 +16,14 @@ const NUTRI_SCORE_IMAGES = {
 const InformacjeScreen = ({ route, navigation }) => {
   const { productDetails } = route.params || {};
   const { addProduct } = useContext(ProductContext);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [grams, setGrams] = useState('');
 
   if (!productDetails) {
     return (
-      <View style={styles.container}>
-        <Text>Brak danych o produkcie.</Text>
-      </View>
+        <View style={styles.container}>
+          <Text>Brak danych o produkcie.</Text>
+        </View>
     );
   }
 
@@ -36,71 +38,113 @@ const InformacjeScreen = ({ route, navigation }) => {
   } = productDetails;
 
   const nutriScoreKey =
-    Array.isArray(nutriScore) && nutriScore.length > 0
-      ? nutriScore[0].toLowerCase()
-      : 'default';
+      Array.isArray(nutriScore) && nutriScore.length > 0
+          ? nutriScore[0].toLowerCase()
+          : 'default';
 
-const handleAddProduct = () => {
-  addProduct({
-    name,
-    nutriScore,
-    calories,
-    fat,
-    sugar,
-    proteins,
-    image_url,
-  });
+  const handleAddProduct = () => {
+    const gramsValue = parseFloat(grams);
+    if (isNaN(gramsValue) || gramsValue < 1) {
+      Alert.alert('Błąd', 'Proszę wprowadzić wartość większą lub równą 1g.');
+      return;
+    }
 
-  navigation.navigate("Dodane Produkty");
-};
+    const factor = gramsValue / 100;
 
-return (
-  <View style={styles.mainContainer}>
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <View style={styles.container}>
-        <Text style={styles.title}>{name}</Text>
+    addProduct({
+      name,
+      nutriScore,
+      calories: (calories * factor).toFixed(2),
+      fat: (fat * factor).toFixed(2),
+      sugar: (sugar * factor).toFixed(2),
+      proteins: (proteins * factor).toFixed(2),
+      image_url,
+    });
 
-        {image_url ? (
-          <Image source={{ uri: image_url }} style={styles.productImage} />
-        ) : (
-          <Text>Brak zdjęcia produktu</Text>
-        )}
+    setModalVisible(false);
+    navigation.navigate('Dodane Produkty');
+  };
 
-        <View style={styles.tableContainer}>
-          <Text style={styles.tableTitle}>Przeciętna wartość odżywcza w 100g produktu:</Text>
-          <View style={styles.table}>
-            <View style={styles.row}>
-              <Text style={styles.cell}>wartość energetyczna</Text>
-              <Text style={styles.cell}>{calories} kcal</Text>
+  return (
+      <View>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <View style={styles.container}>
+            <Text style={styles.title}>{name}</Text>
+
+            {image_url ? (
+                <Image source={{ uri: image_url }} style={styles.productImage} />
+            ) : (
+                <Text>Brak zdjęcia produktu</Text>
+            )}
+
+            <View style={styles.tableContainer}>
+              <Text style={styles.tableTitle}>Przeciętna wartość odżywcza w 100g produktu:</Text>
+              <View style={styles.table}>
+                <View style={styles.row}>
+                  <Text style={styles.cell}>wartość energetyczna</Text>
+                  <Text style={styles.cell}>{calories} kcal</Text>
+                </View>
+                <View style={styles.row}>
+                  <Text style={styles.cell}>tłuszcz</Text>
+                  <Text style={styles.cell}>{fat} g</Text>
+                </View>
+                <View style={styles.row}>
+                  <Text style={styles.cell}>cukry</Text>
+                  <Text style={styles.cell}>{sugar} g</Text>
+                </View>
+                <View style={styles.row}>
+                  <Text style={styles.cell}>białko</Text>
+                  <Text style={styles.cell}>{proteins} g</Text>
+                </View>
+              </View>
             </View>
-            <View style={styles.row}>
-              <Text style={styles.cell}>tłuszcz</Text>
-              <Text style={styles.cell}>{fat} g</Text>
-            </View>
-            <View style={styles.row}>
-              <Text style={styles.cell}>węglowodany</Text>
-              <Text style={styles.cell}>{sugar} g</Text>
-            </View>
-            <View style={styles.row}>
-              <Text style={styles.cell}>białko</Text>
-              <Text style={styles.cell}>{proteins} g</Text>
+
+            <View style={styles.nutriScoreContainer}>
+              <Text style={styles.nutriScoreLabel}>Nutri-Score:</Text>
+              <Image
+                  source={NUTRI_SCORE_IMAGES[nutriScoreKey] || NUTRI_SCORE_IMAGES.default}
+                  style={styles.nutriScoreImage}
+              />
             </View>
           </View>
-        </View>
+        </ScrollView>
+        <TouchableOpacity
+            style={styles.addProductButton}
+            onPress={() => setModalVisible(true)}
+        >
+          <Text style={styles.buttonText}>+</Text>
+        </TouchableOpacity>
 
-        <View style={styles.nutriScoreContainer}>
-          <Text style={styles.nutriScoreLabel}>Nutri-Score:</Text>
-          <Image
-            source={NUTRI_SCORE_IMAGES[nutriScoreKey] || NUTRI_SCORE_IMAGES.default}
-            style={styles.nutriScoreImage}
-          />
-        </View>
+        <Modal
+            visible={modalVisible}
+            transparent={true}
+            animationType="slide"
+            onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <TouchableOpacity
+                  style={styles.closeButton}
+                  onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.closeButtonText}>X</Text>
+              </TouchableOpacity>
+              <Text style={styles.modalTitle}>Ile gramów zjadłeś?</Text>
+              <TextInput
+                  style={styles.input}
+                  keyboardType="numeric"
+                  placeholder="Wprowadź liczbę gramów"
+                  value={grams}
+                  onChangeText={setGrams}
+              />
+              <TouchableOpacity style={styles.confirmButton} onPress={handleAddProduct}>
+                <Text style={styles.confirmButtonText}>Dodaj produkt</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
       </View>
-    </ScrollView>
-    <TouchableOpacity style={styles.addProductButton} onPress= {handleAddProduct}>
-      <Text style={styles.buttonText}>+</Text>
-    </TouchableOpacity>
-  </View>
-);
+  );
 };
+
 export default InformacjeScreen;
