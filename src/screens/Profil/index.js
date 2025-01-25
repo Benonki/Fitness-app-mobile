@@ -11,7 +11,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { UserContext } from '../../context/UserContext';
 
 const ProfilScreen = ({ navigation }) => {
-    const { user, setUser } = useContext(UserContext);
+    const { setUser } = useContext(UserContext);
     const [userData, setUserData] = useState(null);
     const [bmi, setBmi] = useState(0);
     const [gender, setGender] = useState('');
@@ -155,7 +155,7 @@ const ProfilScreen = ({ navigation }) => {
     return (
         <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
             <ScrollView contentContainerStyle>
-                <Text style={styles.header}>Cel związany z aktywnością</Text>
+                <Text style={styles.header}>Cele związane z aktywnością</Text>
 
                 <View style={styles.formGroup}>
                     <Text>Kroki:</Text>
