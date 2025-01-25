@@ -9,6 +9,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { Image } from 'react-native';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { UserContext } from '../../context/UserContext';
+import * as FileSystem from 'expo-file-system';
 
 const ProfilScreen = ({ navigation }) => {
     const { setUser } = useContext(UserContext);
@@ -35,6 +36,15 @@ const ProfilScreen = ({ navigation }) => {
     
 
     const pickImage = async() =>{
+
+
+        const {status} = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+        if(status !== 'granted'){
+            Alert.alert('Nie przyznano uprawnień','Prosze uruchomić uprawnienia do zdjęć')
+            return;
+        }
+
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes:ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
@@ -45,9 +55,21 @@ const ProfilScreen = ({ navigation }) => {
         console.log(result);
 
         if(!result.canceled){
-            const imageUri = result.assets[0].uri
-            setImage(imageUri);
-            handleChange('imageUri',imageUri);
+            try{
+                const imageUri = result.assets[0].uri
+                const fileName = imageUri.split('/').pop();
+                const newPath = `${FileSystem.documentDirectory}${fileName}`;
+
+                await FileSystem.moveAsync({
+                    from: imageUri,
+                    to: newPath,
+                });
+                setImage(newPath);
+                handleChange('imageUri',newPath);
+            }catch(error){
+                console.error(error);
+            }
+            
         }
     };
 
