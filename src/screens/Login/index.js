@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, TextInput, ActivityIndicator, Text, TouchableOpacity } from 'react-native';
 import { Snackbar, Checkbox } from 'react-native-paper';
 import Svg, { Defs, LinearGradient as SvgLinearGradient, Stop, Text as SvgText } from 'react-native-svg';
@@ -6,8 +6,10 @@ import styles from './StyleSheet.js';
 import * as SecureStore from 'expo-secure-store';
 import axios from 'axios';
 import config from '../../../JsonIpConfig.js';
+import { UserContext } from '../../context/UserContext';
 
 const LoginScreen = ({ navigation }) => {
+    const { setUser } = useContext(UserContext);
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [autoLogin, setAutoLogin] = useState(false);
@@ -22,10 +24,20 @@ const LoginScreen = ({ navigation }) => {
             const storedPassword = await SecureStore.getItemAsync('userPassword');
 
             if (token && storedLogin && storedPassword) {
-                navigation.navigate('DrawerNav');
+                const response = await axios.get(`${config.apiBaseUrl}/users`);
+                const users = response.data;
+
+                const user = users.find(
+                    (user) => user.login === storedLogin && user.haslo === storedPassword
+                );
+
+                if (user) {
+                    setUser(user);
+                    navigation.navigate('DrawerNav');
+                }
             }
         } catch (error) {
-            console.error('Błąd podczas sprawdzania zapisanych danych:', error);
+            console.error('Błąd podczas autologowania:', error);
         } finally {
             setLoading(false);
         }
@@ -64,6 +76,7 @@ const LoginScreen = ({ navigation }) => {
                     const token = `${Date.now()}`;
                     saveData(token, login, password)
                         .then(() => {
+                            setUser(user);
                             setMessage('Zalogowano pomyślnie');
                             setVisible(true);
                             navigation.navigate('DrawerNav');

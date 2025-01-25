@@ -3,45 +3,28 @@ import { Text, View, TouchableOpacity  } from 'react-native';
 import CircularProgress from "react-native-circular-progress-indicator";
 import { StepContext } from '../../context/StepContext';
 import { ProductContext } from '../../context/ProductContext';
-import * as SecureStore from 'expo-secure-store';
-import axios from 'axios';
 import styles from './StyleSheet.js';
-import config from '../../../JsonIpConfig.js';
 import { useNotifications } from '../../context/NotificationContext';
+import { UserContext } from '../../context/UserContext';
 
 const DietaScreen = ({ navigation }) => {
+    const { user } = useContext(UserContext);
     const { stepCount, pedometerAvailability } = useContext(StepContext);
     const [maxSteps, setMaxSteps] = useState(0);
     const { getTotalNutrients } = useContext(ProductContext);
-    const [ maxCalories, setMaxCalories ] = useState(0);
+    //const [ maxCalories, setMaxCalories ] = useState(0);
     const [stepGoalReached, setStepGoalReached] = useState(false);
     const [caloriesGoalReached, setCaloriesGoalReached] = useState(false);
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const {addNotification, sendNotification} = useNotifications();
-    
+
     useEffect(() => {
-        const loadUserData = async () => {
-            try {
-                const userLogin = await SecureStore.getItemAsync('userLogin');
-                if (userLogin) {
-                    const response = await axios.get(`${config.apiBaseUrl}/users?login=${userLogin}`);
-                    const user = response.data[0];
-
-                    if (user) {
-                        setMaxSteps(user.kroki);
-                        //setMaxCalories(user.kalorie);
-                        setIsDataLoaded(true);
-                    }
-                }
-            } catch (error) {
-                console.error('Błąd podczas ładowania danych użytkownika:', error);
-            }
-        };
-
-        loadUserData();
-        const intervalId = setInterval(loadUserData, 5000); // odświeżanie Co 5 sekund
-        return () => clearInterval(intervalId);
-    }, []);
+        if (user) {
+            setMaxSteps(user.kroki);
+            //setMaxCalories(user.kalorie);
+            setIsDataLoaded(true);
+        }
+    }, [user]);
 
     let Dist = (stepCount / 1300).toFixed(4); // Dystans w kilometrach
     let cal = (Dist * 60).toFixed(4); // Spalone kalorie

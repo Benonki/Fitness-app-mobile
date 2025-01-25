@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Text, View, TextInput, FlatList, Image, TouchableOpacity } from 'react-native';
 import { CameraView } from 'expo-camera';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
 import styles from './StyleSheet.js';
-import config from "../../../JsonIpConfig";
-import * as SecureStore from "expo-secure-store";
+import { UserContext } from '../../context/UserContext';
 
 const WyszukiwarkaScreen = ({ navigation }) => {
+  const { user } = useContext(UserContext);
   const [searchText, setSearchText] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -17,26 +17,10 @@ const WyszukiwarkaScreen = ({ navigation }) => {
   const [scanned, setScanned] = useState(false);
 
   useEffect(() => {
-    const loadUserData = async () => {
-      try {
-        const userLogin = await SecureStore.getItemAsync('userLogin');
-        if (userLogin) {
-          const response = await axios.get(`${config.apiBaseUrl}/users?login=${userLogin}`);
-          const user = response.data[0];
-
-          if (user) {
-            setTypeOfDiet(user.cel);
-          }
-        }
-      } catch (error) {
-        console.error('Błąd podczas ładowania danych użytkownika:', error);
-      }
-    };
-
-    loadUserData();
-    const intervalId = setInterval(loadUserData, 5000); // odświeżanie Co 5 sekund
-    return () => clearInterval(intervalId);
-  }, []);
+    if (user) {
+      setTypeOfDiet(user.cel);
+    }
+  }, [user]);
 
   useEffect(() => {
     const handler = setTimeout(() => {

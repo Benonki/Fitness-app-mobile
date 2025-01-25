@@ -4,17 +4,20 @@ import StackNav from "./src/routes/StackNav";
 import { StepProvider } from './src/context/StepContext';
 import { NotificationsProvider } from './src/context/NotificationContext';
 import { ProductProvider } from './src/context/ProductContext';
+import { UserProvider } from './src/context/UserContext';
 
 
 function App() {
     return (
     <ProductProvider>
     <StepProvider>
+    <UserProvider>
         <NotificationsProvider>
         <NavigationContainer>
             <StackNav/>
         </NavigationContainer>
         </NotificationsProvider>
+     </UserProvider>
      </StepProvider>
      </ProductProvider>
 

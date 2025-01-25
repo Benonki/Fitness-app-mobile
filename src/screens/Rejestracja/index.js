@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, TextInput, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Keyboard } from 'react-native';
 import { Snackbar, Checkbox } from 'react-native-paper';
 import Svg, { Defs, LinearGradient as SvgLinearGradient, Stop, Text as SvgText } from 'react-native-svg';
@@ -7,8 +7,10 @@ import styles from './StyleSheet.js';
 import axios from 'axios';
 import config from '../../../JsonIpConfig.js';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { UserContext } from '../../context/UserContext';
 
 const RejestracjaScreen = ({ navigation }) => {
+    const { setUser } = useContext(UserContext);
     const [userData, setUserData] = useState({
         login: '',
         password: '',
@@ -102,6 +104,7 @@ const RejestracjaScreen = ({ navigation }) => {
 
         try {
             await axios.post(`${config.apiBaseUrl}/users`, newUser);
+            setUser(newUser);
             setMessage('Rejestracja zakończona sukcesem');
             setVisible(true);
             navigation.navigate('Login');

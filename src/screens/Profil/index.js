@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Text, View, TextInput, TouchableOpacity, Alert, ScrollView, KeyboardAvoidingView } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import { Picker } from '@react-native-picker/picker';
@@ -8,8 +8,10 @@ import config from '../../../JsonIpConfig.js';
 import * as ImagePicker from 'expo-image-picker';
 import { Image } from 'react-native';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { UserContext } from '../../context/UserContext';
 
 const ProfilScreen = ({ navigation }) => {
+    const { user, setUser } = useContext(UserContext);
     const [userData, setUserData] = useState(null);
     const [bmi, setBmi] = useState(0);
     const [gender, setGender] = useState('');
@@ -118,7 +120,7 @@ const ProfilScreen = ({ navigation }) => {
 
             const userId = response.data[0].id;
             await axios.put(`${config.apiBaseUrl}/users/${userId}`, userData);
-
+            setUser(userData);
             Alert.alert('Sukces', 'Dane zostały zaktualizowane');
         } catch (error) {
             console.error('Błąd podczas aktualizacji danych:', error);
