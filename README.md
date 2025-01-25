@@ -15,15 +15,14 @@ A JavaScript application about fitness.
 
 ## Running the App
 
-1. Change IP in JsonIpConfig.js on your IP
-2. Open in CMD or any kind of Console
-3. Start Json Server:
+1. Change the IP in JsonIpConfig.js to your computer's local IPv4 (You have to be in the same network on your phone and computer for this to work)
+2. Start Json Server:
 	```bash
 	npx json-server db.json
     ```
-4. Start Expo:
+3. Start Expo:
 	```bash
 	npx expo start
     ```
-5. Open http://localhost:8081/
+4. Open http://localhost:8081/ on your PC or scan QR code with Expo Go app on your phone (it needs to be SDK 51)
 
