@@ -36,6 +36,3 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
-
-# IP Ignore
-JsonIpConfig.js
