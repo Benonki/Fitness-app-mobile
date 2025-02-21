@@ -1,0 +1,34 @@
+{
+  "users": [
+    {
+      "id": "124a",
+      "login": "Ben",
+      "haslo": "Ten",
+      "kroki": 6000,
+      "cel": "Utrzymanie wagi",
+      "iloscTr": 0,
+      "imie": "Beni",
+      "nazwisko": "Teni",
+      "plec": "Mężczyzna",
+      "dataUr": "12.09.2002",
+      "waga": 83,
+      "wzrost": 179,
+      "imageUri": ""
+    },
+    {
+      "id": "f5a1",
+      "login": "Test",
+      "haslo": "Test",
+      "imie": "Test",
+      "nazwisko": "TestNaz",
+      "waga": 101,
+      "wzrost": 200,
+      "kroki": 27,
+      "cel": "Przybieranie na wadze",
+      "iloscTr": 5,
+      "plec": "Mężczyzna",
+      "dataUr": "21.02.2000",
+      "imageUri": "file:///data/user/0/host.exp.exponent/files/c3e41a2a-924b-4af1-8836-99c508899667.jpeg"
+    }
+  ]
+}
