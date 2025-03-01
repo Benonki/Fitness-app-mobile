@@ -51,7 +51,7 @@ const EkranGlownyScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Svg height="120" width="100%" viewBox="0 0 500 120" style={{ marginBottom: 35 }}>
+            <Svg height="120" width="100%" viewBox="0 0 500 120" style={{ marginBottom: 5 }}>
                 <Defs>
                     <SvgLinearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
                         <Stop offset="0%" stopColor="#D726B9" />
@@ -72,6 +72,10 @@ const EkranGlownyScreen = ({ navigation }) => {
                     FitApp
                 </SvgText>
             </Svg>
+
+            <View style={styles.welcomeContainer}>
+                <Text style={styles.welcomeText}>Cześć {user?.imie}! 👋😀</Text>
+            </View>
 
             {/* Pierwszy rząd */}
             <View style={styles.row}>

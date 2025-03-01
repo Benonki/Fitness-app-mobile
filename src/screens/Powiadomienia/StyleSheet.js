@@ -41,6 +41,17 @@ const styles = StyleSheet.create({
   deleteIcon: {
     padding: 8,
   },
+  dateContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 2,
+  },
+  notificationDate: {
+    fontSize: 12,
+    color: '#888',
+    marginTop: 4,
+    marginBottom: 3,
+  },
 });
 
 export default styles;

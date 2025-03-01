@@ -5,6 +5,7 @@ import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
 import styles from './StyleSheet.js';
 import { UserContext } from '../../context/UserContext';
+import { Audio } from 'expo-av';
 
 const WyszukiwarkaScreen = ({ navigation }) => {
   const { user } = useContext(UserContext);
@@ -102,8 +103,16 @@ const WyszukiwarkaScreen = ({ navigation }) => {
     }
   };
 
-  const handleBarcodeScanned = ({ data }) => {
+  const handleBarcodeScanned = async ({ data }) => {
     setScanned(true);
+    try {
+      const { sound } = await Audio.Sound.createAsync(
+          require('../../../assets/beep.mp3')
+      );
+      await sound.playAsync();
+    } catch (error) {
+      console.error('Error playing sound:', error);
+    }
     fetchProductData(data);
   };
 

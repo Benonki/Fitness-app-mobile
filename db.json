@@ -7,8 +7,8 @@
       "kroki": 6000,
       "cel": "Utrzymanie wagi",
       "iloscTr": 0,
-      "imie": "Beni",
-      "nazwisko": "Teni",
+      "imie": "Jakub",
+      "nazwisko": "Martyniak",
       "plec": "Mężczyzna",
       "dataUr": "12.09.2002",
       "waga": 83,
@@ -23,11 +23,11 @@
       "nazwisko": "TestNaz",
       "waga": 101,
       "wzrost": 200,
-      "kroki": 27,
+      "kroki": 10,
       "cel": "Przybieranie na wadze",
       "iloscTr": 5,
       "plec": "Mężczyzna",
-      "dataUr": "21.02.2000",
+      "dataUr": "1.03.2025",
       "imageUri": "file:///data/user/0/host.exp.exponent/files/c3e41a2a-924b-4af1-8836-99c508899667.jpeg"
     }
   ]

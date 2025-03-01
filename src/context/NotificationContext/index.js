@@ -30,12 +30,18 @@ export const NotificationsProvider = ({ children }) => {
 
 
   const addNotification = (newNotification) => {
+    const notificationWithDate = {
+      ...newNotification,
+      date: new Date().toISOString(),
+    };
+
     setNotifications((prevNotifications) => {
-      const updatedNotifications = [...prevNotifications, newNotification];
+      const updatedNotifications = [...prevNotifications, notificationWithDate];
       saveNotifications(updatedNotifications);
       return updatedNotifications;
     });
   };
+
 
 
   const deleteNotification = (notificationId) => {

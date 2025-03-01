@@ -1,7 +1,8 @@
-import { View, FlatList } from 'react-native';
+import { View, FlatList, Text } from 'react-native';
 import styles from './StyleSheet.js';
 import { useNotifications } from "../../context/NotificationContext";
 import { ListItem, Icon } from 'react-native-elements';
+
 
 const PowiadomieniaScreen = () => {
     const { notifications, deleteNotification } = useNotifications();
@@ -24,6 +25,10 @@ const PowiadomieniaScreen = () => {
                         <ListItem.Content style={styles.notificationContent}>
                             <ListItem.Title style={styles.title}> {item.title || 'Brak tytułu'} </ListItem.Title>
                             <ListItem.Subtitle style={styles.message}> {item.message || 'Brak wiadomości'} </ListItem.Subtitle>
+                            <View style={styles.dateContainer}>
+                                <Icon name="schedule" color="#888" size={14}/>
+                                <Text style={styles.notificationDate}> {new Date(item.date).toLocaleString() || 'Brak daty'} </Text>
+                            </View>
                         </ListItem.Content>
                         <Icon
                             name="close"
