@@ -52,6 +52,12 @@ const styles = StyleSheet.create({
     marginTop: 4,
     marginBottom: 3,
   },
+  noNotifications: {
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#888',
+    marginTop: 20,
+  },
 });
 
 export default styles;

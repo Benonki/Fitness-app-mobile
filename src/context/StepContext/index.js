@@ -72,8 +72,8 @@ export const StepProvider = ({ children }) => {
             loadStepCount();
 
             const stepCounter = Pedometer.watchStepCount(result => {
-                    setStepCount(initialSteps + result.steps);
-                    saveStepCount(initialSteps + result.steps);
+                setStepCount(initialSteps + result.steps);
+                saveStepCount(initialSteps + result.steps);
             });
 
             Pedometer.isAvailableAsync().then(

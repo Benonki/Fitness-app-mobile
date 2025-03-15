@@ -1,72 +1,64 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext } from 'react';
+import axios from 'axios';
+import config from '../../../JsonIpConfig.js';
 
-const NOTIFICATION_STORAGE_KEY = '@notification';
 const NotificationsContext = createContext();
 
 export const NotificationsProvider = ({ children }) => {
-  const [ notifications, setNotifications ] = useState([]);
-  const [ notificationCount, setNotificationCount ] = useState();
+  const [notifications, setNotifications] = useState({});
 
-  const loadNotifications = async () => {
+  const loadNotifications = async (userId) => {
     try {
-      const storedNotifications = await AsyncStorage.getItem(NOTIFICATION_STORAGE_KEY);
-      if (storedNotifications) {
-        setNotifications(JSON.parse(storedNotifications));
-      }
+      const response = await axios.get(`${config.apiBaseUrl}/users/${userId}`);
+      setNotifications((prev) => ({
+        ...prev,
+        [userId]: response.data.notifications || [],
+      }));
     } catch (error) {
       console.error('Błąd ładowania powiadomień:', error);
     }
   };
 
-
-  const saveNotifications = async (updatedNotifications) => {
+  const addNotification = async (userId, newNotification) => {
     try {
-      await AsyncStorage.setItem(NOTIFICATION_STORAGE_KEY, JSON.stringify(updatedNotifications));
+      const response = await axios.get(`${config.apiBaseUrl}/users/${userId}`);
+      const user = response.data;
+      const updatedNotifications = [...(user.notifications || []), { ...newNotification, date: new Date().toISOString() }];
+
+      await axios.patch(`${config.apiBaseUrl}/users/${userId}`, { notifications: updatedNotifications });
+
+      setNotifications((prev) => ({
+        ...prev,
+        [userId]: updatedNotifications,
+      }));
     } catch (error) {
-      console.error('Błąd zapisywania powiadomień:', error);
+      console.error('Błąd dodawania powiadomienia:', error);
     }
   };
 
+  const deleteNotification = async (userId, notificationId) => {
+    try {
+      const response = await axios.get(`${config.apiBaseUrl}/users/${userId}`);
+      const user = response.data;
+      const updatedNotifications = user.notifications.filter((notif) => notif.id !== notificationId);
 
-  const addNotification = (newNotification) => {
-    const notificationWithDate = {
-      ...newNotification,
-      date: new Date().toISOString(),
-    };
+      await axios.patch(`${config.apiBaseUrl}/users/${userId}`, { notifications: updatedNotifications });
 
-    setNotifications((prevNotifications) => {
-      const updatedNotifications = [...prevNotifications, notificationWithDate];
-      saveNotifications(updatedNotifications);
-      return updatedNotifications;
-    });
+      setNotifications((prev) => ({
+        ...prev,
+        [userId]: updatedNotifications,
+      }));
+    } catch (error) {
+      console.error('Błąd usuwania powiadomienia:', error);
+    }
   };
-
-
-
-  const deleteNotification = (notificationId) => {
-    setNotifications((prevNotifications) => {
-      const updatedNotifications = prevNotifications.filter((notification) => notification.id !== notificationId);
-      saveNotifications(updatedNotifications);
-      return updatedNotifications;
-    });
-  };
-
-  useEffect(() => {
-    loadNotifications();
-  }, []);
-
-  useEffect(() => {
-    setNotificationCount(notifications.length);
-  }, [notifications]);
 
   return (
-      <NotificationsContext.Provider value={{ notifications, notificationCount, addNotification, deleteNotification }}>
+      <NotificationsContext.Provider value={{ notifications, loadNotifications, addNotification, deleteNotification }}>
         {children}
       </NotificationsContext.Provider>
   );
 };
-
 
 export const useNotifications = () => {
   return useContext(NotificationsContext);

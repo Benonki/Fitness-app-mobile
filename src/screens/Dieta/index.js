@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Text, View, TouchableOpacity  } from 'react-native';
 import CircularProgress from "react-native-circular-progress-indicator";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -87,8 +87,8 @@ const DietaScreen = ({ navigation }) => {
             if (!isDataLoaded) return;
 
             try {
-                const stepGoalFlag = await AsyncStorage.getItem('stepGoalReached');
-                const caloriesGoalFlag = await AsyncStorage.getItem('caloriesGoalReached');
+                const stepGoalFlag = await AsyncStorage.getItem(`stepGoalReached_${user.id}`);
+                const caloriesGoalFlag = await AsyncStorage.getItem(`caloriesGoalReached_${user.id}`);
 
                 if (stepCount >= maxSteps && stepGoalFlag !== 'true') {
                     const stepNotification = {
@@ -96,8 +96,8 @@ const DietaScreen = ({ navigation }) => {
                         title: "Gratulacje! 😀",
                         message: "Osiągnąłeś swój cel kroków 👟!!!"
                     };
-                    await AsyncStorage.setItem('stepGoalReached', 'true');
-                    addNotification(stepNotification);
+                    await AsyncStorage.setItem(`stepGoalReached_${user.id}`, 'true');
+                    addNotification(user.id, stepNotification);
                 }
 
                 if (consumedCalories >= maxCalories && caloriesGoalFlag !== 'true') {
@@ -106,8 +106,8 @@ const DietaScreen = ({ navigation }) => {
                         title: "Gratulacje! 😀",
                         message: "Osiągnąłeś swój cel kalorii 🍕!!!"
                     };
-                    await AsyncStorage.setItem('caloriesGoalReached', 'true');
-                    addNotification(caloriesNotification);
+                    await AsyncStorage.setItem(`caloriesGoalReached_${user.id}`, 'true');
+                    addNotification(user.id, caloriesNotification);
                 }
             } catch (error) {
                 console.error('Błąd podczas sprawdzania lub ustawiania flagi w AsyncStorage:', error);

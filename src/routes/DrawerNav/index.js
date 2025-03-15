@@ -9,6 +9,8 @@ import PowiadomieniaScreen from "../../screens/Powiadomienia";
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useNotifications } from '../../context/NotificationContext';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {useContext, useEffect, useState} from "react";
+import { UserContext } from "../../context/UserContext";
 
 const Drawer = createDrawerNavigator();
 
@@ -23,7 +25,15 @@ const GradientHeader = () => (
 
 const DrawerNav = () => {
 
-    const {notificationCount} = useNotifications();
+    const {notifications} = useNotifications();
+    const [userNotificationCount, setUserNotificationCount] = useState(0);
+    const { user } = useContext(UserContext);
+
+    useEffect(() => {
+        if (user?.id && notifications[user.id]) {
+            setUserNotificationCount(notifications[user.id].length);
+        }
+    }, [notifications, user?.id]);
     
     return (
         <Drawer.Navigator
@@ -34,32 +44,31 @@ const DrawerNav = () => {
                 drawerLabelStyle: { fontSize: 16, fontWeight: '600', color: '#333',},
                 drawerInactiveTintColor: '#A0A0A0',
                 drawerActiveTintColor: '#11D9EF',
-                headerLeft:() =>(
-                    <TouchableOpacity onPress={()=>navigation.openDrawer()} style={styles.drawerIcon}>
-                        <Ionicons name='menu' size={24} color="black"/>
-                        {notificationCount > 0 &&  (
+                headerLeft: () => (
+                    <TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.drawerIcon}>
+                        <Ionicons name="menu" size={24} color="black" />
+                        {userNotificationCount > 0 && (
                             <View style={styles.cornerBadge}>
-                                <Text style={styles.badgeText}>{notificationCount}</Text>
+                                <Text style={styles.badgeText}>{userNotificationCount}</Text>
                             </View>
-                        )} 
+                        )}
                     </TouchableOpacity>
-
                 ),
             })}>
             <Drawer.Screen name="Ekran Główny" component={EkranGlownyScreen} options={{ drawerIcon: ({ color, size }) => <MaterialIcons name="home" size={size} color={color} /> }} />
             <Drawer.Screen name="Wybór Treningu" component={TreningScreen} options={{ drawerIcon: ({ color, size }) => <MaterialIcons name="fitness-center" size={size} color={color} /> }} />
             <Drawer.Screen name="Śledzenie Diety" component={DietaScreen} options={{ drawerIcon: ({ color, size }) => <MaterialIcons name="restaurant" size={size} color={color} /> }} />
             <Drawer.Screen name="Wyszukiwarka Produktów" component={WyszukiwarkaScreen} options={{ drawerIcon: ({ color, size }) => <MaterialIcons name="search" size={size} color={color} /> }} />
-            <Drawer.Screen 
+            <Drawer.Screen
                 name="Powiadomienia" 
-                component={PowiadomieniaScreen} 
-                options={{ drawerIcon: ({ color, size }) => <MaterialIcons name="notifications" size={size} color={color} />, 
+                component={PowiadomieniaScreen}
+                options={{ drawerIcon: ({ color, size }) => <MaterialIcons name="notifications" size={size} color={color} />,
                             drawerLabel: () => (
                                 <View style = {styles.drawerLabelContainer}>
                                     <Text style={styles.drawerLabelText}>Powiadomienia</Text>
-                                    {notificationCount > 0 && (
+                                    {userNotificationCount > 0 && (
                                         <View style={styles.badge}>
-                                            <Text style={styles.badgeText}>{notificationCount}</Text>
+                                            <Text style={styles.badgeText}>{userNotificationCount}</Text>
                                         </View>
                                     )}
                                 </View>

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Text, View, TouchableOpacity, Image, Alert } from "react-native";
 import styles from './StyleSheet.js';
 import Svg, { Defs, LinearGradient as SvgLinearGradient, Stop, Text as SvgText } from 'react-native-svg';
@@ -9,25 +9,39 @@ import { UserContext } from "../../context/UserContext";
 
 const EkranGlownyScreen = ({ navigation }) => {
 
-    const { notificationCount, addNotification } = useNotifications();
-    const { user } = useContext(UserContext);
+    const { notifications, loadNotifications, addNotification } = useNotifications();
+    const { user, setUser } = useContext(UserContext);
+    const [userNotificationCount, setUserNotificationCount] = useState(0);
 
     useEffect(() => {
+        if (user?.id) {
+            loadNotifications(user.id);
+        }
+    }, [user?.id]);
+
+    useEffect(() => {
+        if (user?.id && notifications[user.id]) {
+            setUserNotificationCount(notifications[user.id].length);
+        }
+    }, [notifications, user?.id]);
+
+    useEffect(() => {
+        if(!user) return;
         const sendBirthdayNotification = async () => {
             const today = new Date().toLocaleDateString().split('.', 2);
             const userBirthday = user.dataUr.split('.', 2);
 
             if (today[0] === userBirthday[0] && today[1] === userBirthday[1]) {
                 try {
-                    const flag = await AsyncStorage.getItem('birthdayNotificationSent');
+                    const flag = await AsyncStorage.getItem(`birthdayNotificationSent_${user.id}`);
                     if (flag !== 'true') {
                         const newNotification = {
                             id: new Date().getTime(),
                             title: "Wszystkiego Najlepszego🎉",
                             message: `Wszystkiego najlepszego ${user.imie}🎂`
                         };
-                        await AsyncStorage.setItem('birthdayNotificationSent', 'true');
-                        addNotification(newNotification);
+                        await AsyncStorage.setItem(`birthdayNotificationSent_${user.id}`, 'true');
+                        addNotification(user.id, newNotification);
                     }
                 } catch (error) {
                     console.error('Błąd podczas sprawdzania lub ustawiania flagi:', error);
@@ -42,6 +56,7 @@ const EkranGlownyScreen = ({ navigation }) => {
             await SecureStore.deleteItemAsync('userToken');
             await SecureStore.deleteItemAsync('userLogin');
             await SecureStore.deleteItemAsync('userPassword');
+            setUser(null);
             navigation.navigate('Login');
         } catch (error) {
             Alert.alert('Błąd', 'Nie udało się wylogować użytkownika.');
@@ -93,8 +108,8 @@ const EkranGlownyScreen = ({ navigation }) => {
             <View style={styles.row}>
                 <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Powiadomienia")}>
                     <Image source={require('../../../assets/EkrGlZdj/Powiadomienia.png')} style={styles.image} />
-                    {notificationCount > 0 && (
-                        <View style={styles.cornerBadge}><Text style={styles.badgeText}>{notificationCount}</Text></View>
+                    {userNotificationCount > 0 && (
+                        <View style={styles.cornerBadge}><Text style={styles.badgeText}>{userNotificationCount}</Text></View>
                     )}
                     <Text style={styles.label}>Powiadomienia</Text>
                 </TouchableOpacity>

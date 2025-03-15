@@ -2,24 +2,33 @@
   "users": [
     {
       "id": "124a",
-      "login": "Ben",
-      "haslo": "Ten",
+      "login": "Log",
+      "haslo": "123",
       "kroki": 6000,
       "cel": "Utrzymanie wagi",
       "iloscTr": 0,
       "imie": "Jakub",
       "nazwisko": "Martyniak",
       "plec": "Mężczyzna",
-      "dataUr": "12.09.2002",
+      "dataUr": "15.03.2025",
       "waga": 83,
       "wzrost": 179,
-      "imageUri": ""
+      "imageUri": "",
+      "notifications": [
+        {
+          "id": 1742039131603,
+          "title": "Gratulacje! 😀",
+          "message": "Osiągnąłeś swój cel kroków 👟!!!",
+          "date": "2025-03-15T11:45:31.614Z"
+        }
+      ],
+      "eatenProducts": []
     },
     {
       "id": "f5a1",
       "login": "Test",
       "haslo": "Test",
-      "imie": "Test",
+      "imie": "TestImie",
       "nazwisko": "TestNaz",
       "waga": 101,
       "wzrost": 200,
@@ -27,8 +36,52 @@
       "cel": "Przybieranie na wadze",
       "iloscTr": 5,
       "plec": "Mężczyzna",
-      "dataUr": "1.03.2025",
-      "imageUri": "file:///data/user/0/host.exp.exponent/files/c3e41a2a-924b-4af1-8836-99c508899667.jpeg"
+      "dataUr": "14.03.2025",
+      "imageUri": "file:///data/user/0/host.exp.exponent/files/c3e41a2a-924b-4af1-8836-99c508899667.jpeg",
+      "notifications": [
+        {
+          "id": 1742037561288,
+          "title": "Wszystkiego Najlepszego🎉",
+          "message": "Wszystkiego najlepszego Test🎂",
+          "date": "2025-03-15T11:19:21.303Z"
+        },
+        {
+          "id": 1742038154495,
+          "title": "Gratulacje! 😀",
+          "message": "Osiągnąłeś swój cel kalorii 🍕!!!",
+          "date": "2025-03-15T11:29:14.533Z"
+        },
+        {
+          "id": 1742040711594,
+          "title": "Gratulacje! 😀",
+          "message": "Osiągnąłeś swój cel kroków 👟!!!",
+          "date": "2025-03-15T12:11:51.617Z"
+        }
+      ],
+      "eatenProducts": [
+        {
+          "name": "Salami z cebulą",
+          "nutriScore": [
+            "e"
+          ],
+          "calories": "4250.00",
+          "fat": "370.00",
+          "sugar": "10.00",
+          "proteins": "190.00",
+          "image_url": "https://images.openfoodfacts.org/images/products/590/231/001/5147/front_pl.4.400.jpg"
+        },
+        {
+          "name": "Nutella",
+          "nutriScore": [
+            "e"
+          ],
+          "calories": "269.50",
+          "fat": "15.45",
+          "sugar": "28.15",
+          "proteins": "3.15",
+          "image_url": "https://images.openfoodfacts.org/images/products/301/762/042/5035/front_en.583.400.jpg"
+        }
+      ]
     }
   ]
 }

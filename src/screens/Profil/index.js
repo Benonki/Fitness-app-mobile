@@ -106,9 +106,15 @@ const ProfilScreen = ({ navigation }) => {
 
     const updateUserData = async () => {
         try {
-            const userId = user.id;
-            await axios.put(`${config.apiBaseUrl}/users/${userId}`, userData);
-            setUser(userData);
+            const response = await axios.get(`${config.apiBaseUrl}/users/${user.id}`);
+            const currentUserData = response.data;
+            const updatedData = {
+                ...currentUserData,
+                ...userData,
+                notifications: currentUserData.notifications
+            };
+            await axios.put(`${config.apiBaseUrl}/users/${user.id}`, updatedData);
+            setUser(updatedData);
             Alert.alert('Sukces', 'Dane zostały zaktualizowane');
         } catch (error) {
             console.error('Błąd podczas aktualizacji danych:', error);
@@ -121,6 +127,7 @@ const ProfilScreen = ({ navigation }) => {
             await SecureStore.deleteItemAsync('userToken');
             await SecureStore.deleteItemAsync('userLogin');
             await SecureStore.deleteItemAsync('userPassword');
+            setUser(null);
             navigation.navigate('Login');
         } catch (error) {
             Alert.alert('Błąd', 'Nie udało się wylogować użytkownika.');
