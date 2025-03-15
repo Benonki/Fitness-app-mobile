@@ -1,16 +1,15 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserContext } from '../UserContext';
-import axios from 'axios';
-import config from '../../../JsonIpConfig.js';
-
-export const ProductContext = createContext();
+import { loadProductsFromAPI, updateUserProducts, clearUserProducts } from '../../api/eatedProducts';
 
 const DATE_STORAGE_KEY = '@lastDate';
 
+export const ProductContext = createContext();
+
 export const ProductProvider = ({ children }) => {
   const { user } = useContext(UserContext);
-  const [ products, setProducts ] = useState([]);
+  const [products, setProducts] = useState([]);
   const [lastDate, setLastDate] = useState(null);
 
   const loadProducts = async () => {
@@ -24,11 +23,10 @@ export const ProductProvider = ({ children }) => {
         day: '2-digit',
       });
 
-      const response = await axios.get(`${config.apiBaseUrl}/users/${user.id}`);
-      let userData = response.data;
+      const userData = await loadProductsFromAPI(user.id);
 
       if (!storedDate || storedDate !== today) {
-        await axios.patch(`${config.apiBaseUrl}/users/${user.id}`, { eatenProducts: [] });
+        await updateUserProducts(user.id, []);
 
         await Promise.all([
           AsyncStorage.setItem(DATE_STORAGE_KEY, today),
@@ -49,10 +47,10 @@ export const ProductProvider = ({ children }) => {
     if (!user) return;
 
     try {
-      const response = await axios.get(`${config.apiBaseUrl}/users/${user.id}`);
-      const updatedProducts = [...response.data.eatenProducts, product];
+      const userData = await loadProductsFromAPI(user.id);
+      const updatedProducts = [...userData.eatenProducts, product];
 
-      await axios.patch(`${config.apiBaseUrl}/users/${user.id}`, { eatenProducts: updatedProducts });
+      await updateUserProducts(user.id, updatedProducts);
 
       setProducts(updatedProducts);
     } catch (error) {
@@ -64,10 +62,10 @@ export const ProductProvider = ({ children }) => {
     if (!user) return;
 
     try {
-      const response = await axios.get(`${config.apiBaseUrl}/users/${user.id}`);
-      const updatedProducts = response.data.eatenProducts.filter((_, i) => i !== index);
+      const userData = await loadProductsFromAPI(user.id);
+      const updatedProducts = userData.eatenProducts.filter((_, i) => i !== index);
 
-      await axios.patch(`${config.apiBaseUrl}/users/${user.id}`, { eatenProducts: updatedProducts });
+      await updateUserProducts(user.id, updatedProducts);
 
       setProducts(updatedProducts);
     } catch (error) {
@@ -79,7 +77,7 @@ export const ProductProvider = ({ children }) => {
     if (!user) return;
 
     try {
-      await axios.patch(`${config.apiBaseUrl}/users/${user.id}`, { eatenProducts: [] });
+      await clearUserProducts(user.id);
       setProducts([]);
     } catch (error) {
       console.error('Błąd podczas czyszczenia produktów:', error);

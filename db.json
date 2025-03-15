@@ -22,13 +22,21 @@
           "date": "2025-03-15T11:45:31.614Z"
         }
       ],
-      "eatenProducts": []
+      "eatenProducts": [
+        {
+          "name": "Kevab",
+          "calories": 5000,
+          "fat": 0,
+          "sugar": 0,
+          "proteins": 0
+        }
+      ]
     },
     {
       "id": "f5a1",
       "login": "Test",
       "haslo": "Test",
-      "imie": "TestImie",
+      "imie": "TestImię",
       "nazwisko": "TestNaz",
       "waga": 101,
       "wzrost": 200,
@@ -46,16 +54,16 @@
           "date": "2025-03-15T11:19:21.303Z"
         },
         {
-          "id": 1742038154495,
-          "title": "Gratulacje! 😀",
-          "message": "Osiągnąłeś swój cel kalorii 🍕!!!",
-          "date": "2025-03-15T11:29:14.533Z"
-        },
-        {
           "id": 1742040711594,
           "title": "Gratulacje! 😀",
           "message": "Osiągnąłeś swój cel kroków 👟!!!",
           "date": "2025-03-15T12:11:51.617Z"
+        },
+        {
+          "id": 1742059378242,
+          "title": "Gratulacje! 😀",
+          "message": "Osiągnąłeś swój cel kalorii 🍕!!!",
+          "date": "2025-03-15T17:22:58.264Z"
         }
       ],
       "eatenProducts": [
@@ -80,6 +88,39 @@
           "sugar": "28.15",
           "proteins": "3.15",
           "image_url": "https://images.openfoodfacts.org/images/products/301/762/042/5035/front_en.583.400.jpg"
+        },
+        {
+          "name": "Nutella",
+          "nutriScore": [
+            "e"
+          ],
+          "calories": "2695.00",
+          "fat": "154.50",
+          "sugar": "281.50",
+          "proteins": "31.50",
+          "image_url": "https://images.openfoodfacts.org/images/products/301/762/042/5035/front_en.583.400.jpg"
+        },
+        {
+          "name": "Nuggets Végétaux et Gourmands",
+          "nutriScore": [
+            "a"
+          ],
+          "calories": "241.00",
+          "fat": "13.00",
+          "sugar": "0.50",
+          "proteins": "9.20",
+          "image_url": "https://images.openfoodfacts.org/images/products/377/001/616/2036/front_fr.68.400.jpg"
+        },
+        {
+          "name": "Original Taste",
+          "nutriScore": [
+            "e"
+          ],
+          "calories": "21.00",
+          "fat": "NaN",
+          "sugar": "5.30",
+          "proteins": "NaN",
+          "image_url": "https://images.openfoodfacts.org/images/products/544/900/013/0389/front_en.149.400.jpg"
         }
       ]
     }

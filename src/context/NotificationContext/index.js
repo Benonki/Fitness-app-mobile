@@ -1,32 +1,25 @@
 import React, { createContext, useState, useContext } from 'react';
-import axios from 'axios';
-import config from '../../../JsonIpConfig.js';
-
+import { loadNotifications, addNotification, deleteNotification } from '../../api/notifications';
 const NotificationsContext = createContext();
 
 export const NotificationsProvider = ({ children }) => {
   const [notifications, setNotifications] = useState({});
 
-  const loadNotifications = async (userId) => {
+  const loadUserNotifications = async (userId) => {
     try {
-      const response = await axios.get(`${config.apiBaseUrl}/users/${userId}`);
+      const userNotifications = await loadNotifications(userId);
       setNotifications((prev) => ({
         ...prev,
-        [userId]: response.data.notifications || [],
+        [userId]: userNotifications,
       }));
     } catch (error) {
       console.error('Błąd ładowania powiadomień:', error);
     }
   };
 
-  const addNotification = async (userId, newNotification) => {
+  const addUserNotification = async (userId, newNotification) => {
     try {
-      const response = await axios.get(`${config.apiBaseUrl}/users/${userId}`);
-      const user = response.data;
-      const updatedNotifications = [...(user.notifications || []), { ...newNotification, date: new Date().toISOString() }];
-
-      await axios.patch(`${config.apiBaseUrl}/users/${userId}`, { notifications: updatedNotifications });
-
+      const updatedNotifications = await addNotification(userId, newNotification);
       setNotifications((prev) => ({
         ...prev,
         [userId]: updatedNotifications,
@@ -36,14 +29,9 @@ export const NotificationsProvider = ({ children }) => {
     }
   };
 
-  const deleteNotification = async (userId, notificationId) => {
+  const deleteUserNotification = async (userId, notificationId) => {
     try {
-      const response = await axios.get(`${config.apiBaseUrl}/users/${userId}`);
-      const user = response.data;
-      const updatedNotifications = user.notifications.filter((notif) => notif.id !== notificationId);
-
-      await axios.patch(`${config.apiBaseUrl}/users/${userId}`, { notifications: updatedNotifications });
-
+      const updatedNotifications = await deleteNotification(userId, notificationId);
       setNotifications((prev) => ({
         ...prev,
         [userId]: updatedNotifications,
@@ -54,7 +42,7 @@ export const NotificationsProvider = ({ children }) => {
   };
 
   return (
-      <NotificationsContext.Provider value={{ notifications, loadNotifications, addNotification, deleteNotification }}>
+      <NotificationsContext.Provider value={{ notifications, loadUserNotifications, addUserNotification, deleteUserNotification }}>
         {children}
       </NotificationsContext.Provider>
   );

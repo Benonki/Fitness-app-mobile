@@ -1,6 +1,6 @@
 # Fitness App Mobile
 
-A JavaScript/React application about fitness.
+A JavaScript/React fitness app that helps you watch your steps, calories and more.
 
 ## Setup
 1. Install Node.js on your PC: 
@@ -23,7 +23,7 @@ A JavaScript/React application about fitness.
 
 ## Running the App
 
-1. Change the IP in JsonIpConfig.js to your computer's local IPv4 (You have to be in the same network on your phone and computer for this to work)
+1. Change the IP in src/api/axiosInstance.js to your computer's local IPv4 (You have to be in the same network on your phone and computer for this to work)
 2. Start Json Server (in console nr 1):
 	```bash
 	npx json-server db.json
@@ -32,7 +32,7 @@ A JavaScript/React application about fitness.
 	```bash
 	npx expo start
     ```
-4. Open http://localhost:8081/ on your PC or scan QR code (Recommended!!!) with Expo Go app on your phone (it needs to be SDK 51)
+4. You can either open http://localhost:8081/ on your PC, use the phone emulator, or scan the QR code (Recommended!!!) with Expo Go app on your phone (it needs to be SDK 51).
 
 ## Showcase
 

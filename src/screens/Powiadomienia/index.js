@@ -1,24 +1,24 @@
 import { View, FlatList, Text } from 'react-native';
 import styles from './StyleSheet.js';
 import { useNotifications } from "../../context/NotificationContext";
+import { UserContext } from "../../context/UserContext";
 import { ListItem, Icon } from 'react-native-elements';
 import { useContext, useEffect } from "react";
-import { UserContext } from "../../context/UserContext";
 
 const PowiadomieniaScreen = () => {
-    const { notifications, loadNotifications, deleteNotification } = useNotifications();
+    const { notifications, loadUserNotifications, deleteUserNotification } = useNotifications();
     const { user } = useContext(UserContext);
 
     useEffect(() => {
         if (user?.id) {
-            loadNotifications(user.id);
+            loadUserNotifications(user.id);
         }
     }, [user?.id]);
 
     const userNotifications = notifications[user?.id] || [];
 
     const handleDeleteNotification = (notificationId) => {
-        deleteNotification(user.id, notificationId);
+        deleteUserNotification(user.id, notificationId);
     };
 
     return (

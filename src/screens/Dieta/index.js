@@ -16,7 +16,7 @@ const DietaScreen = ({ navigation }) => {
     const [ maxCalories, setMaxCalories ] = useState(0);
     const [ consumedCalories, setConsumedCalories ] = useState(0);
     const [ isDataLoaded, setIsDataLoaded ] = useState(false);
-    const { addNotification } = useNotifications();
+    const { addUserNotification } = useNotifications();
     const { products } = useContext(ProductContext);
 
     useEffect(() => {
@@ -97,7 +97,7 @@ const DietaScreen = ({ navigation }) => {
                         message: "Osiągnąłeś swój cel kroków 👟!!!"
                     };
                     await AsyncStorage.setItem(`stepGoalReached_${user.id}`, 'true');
-                    addNotification(user.id, stepNotification);
+                    addUserNotification(user.id, stepNotification);
                 }
 
                 if (consumedCalories >= maxCalories && caloriesGoalFlag !== 'true') {
@@ -107,7 +107,7 @@ const DietaScreen = ({ navigation }) => {
                         message: "Osiągnąłeś swój cel kalorii 🍕!!!"
                     };
                     await AsyncStorage.setItem(`caloriesGoalReached_${user.id}`, 'true');
-                    addNotification(user.id, caloriesNotification);
+                    addUserNotification(user.id, caloriesNotification);
                 }
             } catch (error) {
                 console.error('Błąd podczas sprawdzania lub ustawiania flagi w AsyncStorage:', error);
@@ -115,7 +115,7 @@ const DietaScreen = ({ navigation }) => {
         };
 
         checkGoalsAndSendNotifications();
-    }, [stepCount, consumedCalories, maxSteps, maxCalories, isDataLoaded, addNotification]);
+    }, [stepCount, consumedCalories, maxSteps, maxCalories, isDataLoaded, addUserNotification]);
 
 
     return (

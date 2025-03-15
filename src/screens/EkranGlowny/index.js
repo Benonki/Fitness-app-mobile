@@ -9,13 +9,13 @@ import { UserContext } from "../../context/UserContext";
 
 const EkranGlownyScreen = ({ navigation }) => {
 
-    const { notifications, loadNotifications, addNotification } = useNotifications();
+    const { notifications, loadUserNotifications, addUserNotification } = useNotifications();
     const { user, setUser } = useContext(UserContext);
     const [userNotificationCount, setUserNotificationCount] = useState(0);
 
     useEffect(() => {
         if (user?.id) {
-            loadNotifications(user.id);
+            loadUserNotifications(user.id);
         }
     }, [user?.id]);
 
@@ -41,7 +41,7 @@ const EkranGlownyScreen = ({ navigation }) => {
                             message: `Wszystkiego najlepszego ${user.imie}🎂`
                         };
                         await AsyncStorage.setItem(`birthdayNotificationSent_${user.id}`, 'true');
-                        addNotification(user.id, newNotification);
+                        addUserNotification(user.id, newNotification);
                     }
                 } catch (error) {
                     console.error('Błąd podczas sprawdzania lub ustawiania flagi:', error);

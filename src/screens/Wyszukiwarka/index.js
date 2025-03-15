@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Text, View, TextInput, FlatList, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { CameraView } from 'expo-camera';
-import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
 import styles from './StyleSheet.js';
 import { UserContext } from '../../context/UserContext';
 import { Audio } from 'expo-av';
+import { fetchSearchResultsFromAPI, fetchDietProductsFromAPI, fetchProductDataFromAPI } from '../../api/products';
 
 const WyszukiwarkaScreen = ({ navigation }) => {
   const { user } = useContext(UserContext);
@@ -49,16 +49,8 @@ const WyszukiwarkaScreen = ({ navigation }) => {
   const fetchSearchResults = async (query) => {
     setLoading(true);
     try {
-      const response = await axios.get(
-          `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(
-              query
-          )}&search_simple=1&action=process&json=1`
-      );
-      if (response.data && response.data.products) {
-        setSearchResults(response.data.products);
-      } else {
-        setSearchResults([]);
-      }
+      const products = await fetchSearchResultsFromAPI(query);
+      setSearchResults(products);
     } catch (error) {
       console.error('Error fetching search results:', error);
     } finally {
@@ -69,39 +61,8 @@ const WyszukiwarkaScreen = ({ navigation }) => {
   const fetchDietProducts = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-          `https://world.openfoodfacts.org/cgi/search.pl?search_simple=1&action=process&json=1`
-      );
-
-      if (response.data && Array.isArray(response.data.products)) {
-        const products = response.data.products.filter((product) => {
-          if (!product.nutriments) return false;
-
-          if (typeOfDiet === 'Utrata wagi') {
-            if (product.product_name && (product.product_name.includes('Coca-Cola') || product.product_name.includes('Coca Cola'))) {
-              return false;
-            }
-            return product.nutriments['energy-kcal_100g'] < 155;
-          }
-
-          if (typeOfDiet === 'Przybieranie na wadze') {
-            return product.nutriments['energy-kcal_100g'] > 500;
-          }
-
-          if (typeOfDiet === 'Utrzymanie wagi') {
-            if (product.product_name && (product.product_name.includes('Coca-Cola') || product.product_name.includes('Coca Cola'))) {
-              return false;
-            }
-            return product.nutriments['energy-kcal_100g'] > 155 && product.nutriments['energy-kcal_100g'] < 500;
-          }
-
-          return false;
-        });
-        setDietProducts(products);
-      } else {
-        console.warn('No products found or response format is incorrect.');
-        setDietProducts([]);
-      }
+      const products = await fetchDietProductsFromAPI(typeOfDiet);
+      setDietProducts(products);
     } catch (error) {
       console.error('Error fetching diet products:', error);
       setDietProducts([]);
@@ -125,9 +86,9 @@ const WyszukiwarkaScreen = ({ navigation }) => {
 
   const fetchProductData = async (barcode) => {
     try {
-      const response = await axios.get(`https://world.openfoodfacts.org/api/v3/product/${barcode}.json`);
-      if (response.data && response.data.product) {
-        navigateToProductDetails(response.data.product);
+      const product = await fetchProductDataFromAPI(barcode);
+      if (product) {
+        navigateToProductDetails(product);
       } else {
         alert('No product found');
       }
