@@ -57,6 +57,7 @@ export const registerUser = async (userData, acceptedTerms, setMessage, setVisib
         waga: parseFloat(userData.waga),
         wzrost: parseFloat(userData.wzrost),
         kroki: parseInt(userData.kroki),
+        zrKroki: 0,
         cel: userData.cel,
         iloscTr: parseInt(userData.iloscTr),
         plec: userData.plec,

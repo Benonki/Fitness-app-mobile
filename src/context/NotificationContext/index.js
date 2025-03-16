@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext } from 'react';
 import { loadNotifications, addNotification, deleteNotification } from '../../api/notifications';
+
 const NotificationsContext = createContext();
 
 export const NotificationsProvider = ({ children }) => {
