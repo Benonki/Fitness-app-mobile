@@ -1,66 +1,53 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext } from 'react';
+import { loadNotifications, addNotification, deleteNotification } from '../../api/notifications';
 
-const NOTIFICATION_STORAGE_KEY = '@notification';
 const NotificationsContext = createContext();
 
 export const NotificationsProvider = ({ children }) => {
-  const [ notifications, setNotifications ] = useState([]);
-  const [ notificationCount, setNotificationCount ] = useState();
+  const [notifications, setNotifications] = useState({});
 
-  const loadNotifications = async () => {
+  const loadUserNotifications = async (userId) => {
     try {
-      const storedNotifications = await AsyncStorage.getItem(NOTIFICATION_STORAGE_KEY);
-      if (storedNotifications) {
-        setNotifications(JSON.parse(storedNotifications));
-      }
+      const userNotifications = await loadNotifications(userId);
+      setNotifications((prev) => ({
+        ...prev,
+        [userId]: userNotifications,
+      }));
     } catch (error) {
       console.error('Błąd ładowania powiadomień:', error);
     }
   };
 
-
-  const saveNotifications = async (updatedNotifications) => {
+  const addUserNotification = async (userId, newNotification) => {
     try {
-      await AsyncStorage.setItem(NOTIFICATION_STORAGE_KEY, JSON.stringify(updatedNotifications));
+      const updatedNotifications = await addNotification(userId, newNotification);
+      setNotifications((prev) => ({
+        ...prev,
+        [userId]: updatedNotifications,
+      }));
     } catch (error) {
-      console.error('Błąd zapisywania powiadomień:', error);
+      console.error('Błąd dodawania powiadomienia:', error);
     }
   };
 
-
-  const addNotification = (newNotification) => {
-    setNotifications((prevNotifications) => {
-      const updatedNotifications = [...prevNotifications, newNotification];
-      saveNotifications(updatedNotifications);
-      return updatedNotifications;
-    });
+  const deleteUserNotification = async (userId, notificationId) => {
+    try {
+      const updatedNotifications = await deleteNotification(userId, notificationId);
+      setNotifications((prev) => ({
+        ...prev,
+        [userId]: updatedNotifications,
+      }));
+    } catch (error) {
+      console.error('Błąd usuwania powiadomienia:', error);
+    }
   };
-
-
-  const deleteNotification = (notificationId) => {
-    setNotifications((prevNotifications) => {
-      const updatedNotifications = prevNotifications.filter((notification) => notification.id !== notificationId);
-      saveNotifications(updatedNotifications);
-      return updatedNotifications;
-    });
-  };
-
-  useEffect(() => {
-    loadNotifications();
-  }, []);
-
-  useEffect(() => {
-    setNotificationCount(notifications.length);
-  }, [notifications]);
 
   return (
-      <NotificationsContext.Provider value={{ notifications, notificationCount, addNotification, deleteNotification }}>
+      <NotificationsContext.Provider value={{ notifications, loadUserNotifications, addUserNotification, deleteUserNotification }}>
         {children}
       </NotificationsContext.Provider>
   );
 };
-
 
 export const useNotifications = () => {
   return useContext(NotificationsContext);

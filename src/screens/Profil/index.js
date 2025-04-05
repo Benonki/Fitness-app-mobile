@@ -1,27 +1,26 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Text, View, TextInput, TouchableOpacity, Alert, ScrollView, KeyboardAvoidingView } from 'react-native';
-import * as SecureStore from 'expo-secure-store';
 import { Picker } from '@react-native-picker/picker';
-import axios from 'axios';
-import styles from './StyleSheet.js';
-import config from '../../../JsonIpConfig.js';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import * as ImagePicker from 'expo-image-picker';
 import { Image } from 'react-native';
-import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { UserContext } from '../../context/UserContext';
+import styles from './StyleSheet.js';
 import * as FileSystem from 'expo-file-system';
+import * as SecureStore from 'expo-secure-store';
+import { getUserData, updateUserData } from '../../api/accounts';
 
 const ProfilScreen = ({ navigation }) => {
     const { user, setUser } = useContext(UserContext);
-    const [ userData, setUserData ] = useState(null);
-    const [ bmi, setBmi ] = useState(0);
-    const [ gender, setGender ] = useState('');
-    const [ goal, setGoal ] = useState('');
-    const [ image, setImage ] = useState(null);
-    const [ visibilityDatePicker, sertVisibilityDatePicker ] = useState(false);
+    const [userData, setUserData] = useState(null);
+    const [bmi, setBmi] = useState(0);
+    const [gender, setGender] = useState('');
+    const [goal, setGoal] = useState('');
+    const [image, setImage] = useState(null);
+    const [visibilityDatePicker, setVisibilityDatePicker] = useState(false);
 
-    const showDatePicker = () => { sertVisibilityDatePicker(true); };
-    const hideDatePicker = () => { sertVisibilityDatePicker(false); };
+    const showDatePicker = () => { setVisibilityDatePicker(true); };
+    const hideDatePicker = () => { setVisibilityDatePicker(false); };
 
     const handleDateConfirm = (date) => {
         const formattedDate = date.toLocaleDateString('pl-PL');
@@ -29,26 +28,24 @@ const ProfilScreen = ({ navigation }) => {
         hideDatePicker();
     };
 
-    const pickImage = async() =>{
-        const {status} = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const pickImage = async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-        if(status !== 'granted'){
-            Alert.alert('Nie przyznano uprawnień','Prosze uruchomić uprawnienia do zdjęć')
+        if (status !== 'granted') {
+            Alert.alert('Nie przyznano uprawnień', 'Proszę uruchomić uprawnienia do zdjęć');
             return;
         }
 
         let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes:ImagePicker.MediaTypeOptions.Images,
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
-            aspect: [1,1],
+            aspect: [1, 1],
             quality: 1,
         });
 
-        console.log(result);
-
-        if(!result.canceled){
-            try{
-                const imageUri = result.assets[0].uri
+        if (!result.canceled) {
+            try {
+                const imageUri = result.assets[0].uri;
                 const fileName = imageUri.split('/').pop();
                 const newPath = `${FileSystem.documentDirectory}${fileName}`;
 
@@ -57,11 +54,10 @@ const ProfilScreen = ({ navigation }) => {
                     to: newPath,
                 });
                 setImage(newPath);
-                handleChange('imageUri',newPath);
-            }catch(error){
+                handleChange('imageUri', newPath);
+            } catch (error) {
                 console.error(error);
             }
-
         }
     };
 
@@ -71,12 +67,22 @@ const ProfilScreen = ({ navigation }) => {
     };
 
     useEffect(() => {
-        setUserData(user);
-        setGender(user.plec);
-        setImage(user.imageUri);
-        setGoal(user.cel);
-        calculateBmi(user.waga, user.wzrost);
-    }, []);
+        if(!user) return;
+        const fetchData = async () => {
+            try {
+                const userData = await getUserData(user.id);
+                setUserData(userData);
+                setGender(userData.plec);
+                setImage(userData.imageUri);
+                setGoal(userData.cel);
+                calculateBmi(userData.waga, userData.wzrost);
+            } catch (error) {
+                Alert.alert('Błąd', 'Nie udało się załadować danych użytkownika');
+            }
+        };
+
+        fetchData();
+    }, [user]);
 
     const handleChange = (key, value) => {
         if (userData) {
@@ -103,15 +109,12 @@ const ProfilScreen = ({ navigation }) => {
         }
     };
 
-
-    const updateUserData = async () => {
+    const updateUser = async () => {
         try {
-            const userId = user.id;
-            await axios.put(`${config.apiBaseUrl}/users/${userId}`, userData);
-            setUser(userData);
+            const updatedData = await updateUserData(user.id, userData);
+            setUser(updatedData);
             Alert.alert('Sukces', 'Dane zostały zaktualizowane');
         } catch (error) {
-            console.error('Błąd podczas aktualizacji danych:', error);
             Alert.alert('Błąd', 'Nie udało się zaktualizować danych');
         }
     };
@@ -120,7 +123,8 @@ const ProfilScreen = ({ navigation }) => {
         try {
             await SecureStore.deleteItemAsync('userToken');
             await SecureStore.deleteItemAsync('userLogin');
-            await SecureStore.deleteItemAsync('userPassword');
+            await SecureStore.deleteItemAsync('AutoLoginMode');
+            setUser(null);
             navigation.navigate('Login');
         } catch (error) {
             Alert.alert('Błąd', 'Nie udało się wylogować użytkownika.');
@@ -136,7 +140,6 @@ const ProfilScreen = ({ navigation }) => {
                     <Text style={styles.buttonText}>Wyloguj się</Text>
                 </TouchableOpacity>
             </View>
-
         );
     }
 
@@ -287,7 +290,7 @@ const ProfilScreen = ({ navigation }) => {
                     </Text>
                 </View>
 
-                <TouchableOpacity style={styles.button} onPress={updateUserData}>
+                <TouchableOpacity style={styles.button} onPress={updateUser}>
                     <Text style={styles.buttonText}>Zapisz zmiany</Text>
                 </TouchableOpacity>
 

@@ -98,6 +98,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 12,
   },
+  searchResultsContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+  },
   cameraView: StyleSheet.absoluteFillObject
 });
 

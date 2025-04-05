@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Text, View, TextInput, FlatList, Image, TouchableOpacity } from 'react-native';
+import { Text, View, TextInput, FlatList, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { CameraView } from 'expo-camera';
-import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
 import styles from './StyleSheet.js';
 import { UserContext } from '../../context/UserContext';
+import { Audio } from 'expo-av';
+import { fetchSearchResultsFromAPI, fetchDietProductsFromAPI, fetchProductDataFromAPI } from '../../api/products';
 
 const WyszukiwarkaScreen = ({ navigation }) => {
   const { user } = useContext(UserContext);
@@ -15,6 +16,7 @@ const WyszukiwarkaScreen = ({ navigation }) => {
   const [ dietProducts, setDietProducts ] = useState([]);
   const [ cameraVisible, setCameraVisible ] = useState(false);
   const [ scanned, setScanned ] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -45,73 +47,48 @@ const WyszukiwarkaScreen = ({ navigation }) => {
   }, [typeOfDiet]);
 
   const fetchSearchResults = async (query) => {
+    setLoading(true);
     try {
-      const response = await axios.get(
-          `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(
-              query
-          )}&search_simple=1&action=process&json=1`
-      );
-      if (response.data && response.data.products) {
-        setSearchResults(response.data.products);
-      } else {
-        setSearchResults([]);
-      }
+      const products = await fetchSearchResultsFromAPI(query);
+      setSearchResults(products);
     } catch (error) {
       console.error('Error fetching search results:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const fetchDietProducts = async () => {
+    setLoading(true);
     try {
-      const response = await axios.get(
-          `https://world.openfoodfacts.org/cgi/search.pl?search_simple=1&action=process&json=1`
-      );
-
-      if (response.data && Array.isArray(response.data.products)) {
-        const products = response.data.products.filter((product) => {
-          if (!product.nutriments) return false;
-
-          if (typeOfDiet === 'Utrata wagi') {
-            if (product.product_name && (product.product_name.includes('Coca-Cola') || product.product_name.includes('Coca Cola'))) {
-              return false;
-            }
-            return product.nutriments['energy-kcal_100g'] < 155;
-          }
-
-          if (typeOfDiet === 'Przybieranie na wadze') {
-            return product.nutriments['energy-kcal_100g'] > 500;
-          }
-
-          if (typeOfDiet === 'Utrzymanie wagi') {
-            if (product.product_name && (product.product_name.includes('Coca-Cola') || product.product_name.includes('Coca Cola'))) {
-              return false;
-            }
-            return product.nutriments['energy-kcal_100g'] > 155 && product.nutriments['energy-kcal_100g'] < 500;
-          }
-
-          return false;
-        });
-        setDietProducts(products);
-      } else {
-        console.warn('No products found or response format is incorrect.');
-        setDietProducts([]);
-      }
+      const products = await fetchDietProductsFromAPI(typeOfDiet);
+      setDietProducts(products);
     } catch (error) {
       console.error('Error fetching diet products:', error);
       setDietProducts([]);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleBarcodeScanned = ({ data }) => {
+  const handleBarcodeScanned = async ({ data }) => {
     setScanned(true);
+    try {
+      const { sound } = await Audio.Sound.createAsync(
+          require('../../../assets/beep.mp3')
+      );
+      await sound.playAsync();
+    } catch (error) {
+      console.error('Error playing sound:', error);
+    }
     fetchProductData(data);
   };
 
   const fetchProductData = async (barcode) => {
     try {
-      const response = await axios.get(`https://world.openfoodfacts.org/api/v3/product/${barcode}.json`);
-      if (response.data && response.data.product) {
-        navigateToProductDetails(response.data.product);
+      const product = await fetchProductDataFromAPI(barcode);
+      if (product) {
+        navigateToProductDetails(product);
       } else {
         alert('No product found');
       }
@@ -198,27 +175,40 @@ const WyszukiwarkaScreen = ({ navigation }) => {
         {searchText.trim() === '' && !cameraVisible && (
             <View style={styles.ProposalItems}>
               <Text style={styles.dietTitle}>Propozycje dla celu: {typeOfDiet}</Text>
-              {typeOfDiet && dietProducts.length > 0 && (
-                  <FlatList
-                      data={dietProducts}
-                      keyExtractor={(item, index) => item.id || item.code || index.toString()}
-                      renderItem={renderDietProductItem}
-                      ListEmptyComponent={<Text style={styles.noResultsText}>No products found</Text>}
-                      showsHorizontalScrollIndicator={false}
-                  />
+
+              {loading ? (
+                  <ActivityIndicator size="large" color="#11D9EF" />
+              ) : (
+                  typeOfDiet && dietProducts.length > 0 ? (
+                      <FlatList
+                          data={dietProducts}
+                          keyExtractor={(item, index) => item.id || item.code || index.toString()}
+                          renderItem={renderDietProductItem}
+                          ListEmptyComponent={<Text style={styles.noResultsText}>No products found</Text>}
+                          showsHorizontalScrollIndicator={false}
+                      />
+                  ) : (
+                      <Text style={styles.noResultsText}>No products found</Text>
+                  )
               )}
             </View>
         )}
 
         {!cameraVisible && (
-            <FlatList
-                data={searchResults}
-                keyExtractor={(item, index) => item.id || item.code || index.toString()}
-                renderItem={renderProductItem}
-                ListEmptyComponent={
-                  !searchText.trim() ? null : <Text style={styles.noResultsText}>No products found</Text>
-                }
-            />
+            <View style={styles.searchResultsContainer}>
+              {loading && searchText.trim() ? (
+                  <ActivityIndicator size={100} color="#11D9EF" />
+              ) : (
+                  <FlatList
+                      data={searchResults}
+                      keyExtractor={(item, index) => item.id || item.code || index.toString()}
+                      renderItem={renderProductItem}
+                      ListEmptyComponent={
+                        !searchText.trim() ? null : <Text style={styles.noResultsText}>No products found</Text>
+                      }
+                  />
+              )}
+            </View>
         )}
 
         {cameraVisible && (

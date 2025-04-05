@@ -1,16 +1,13 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { View, TextInput, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Keyboard } from 'react-native';
 import { Snackbar, Checkbox } from 'react-native-paper';
 import Svg, { Defs, LinearGradient as SvgLinearGradient, Stop, Text as SvgText } from 'react-native-svg';
 import { Picker } from '@react-native-picker/picker';
 import styles from './StyleSheet.js';
-import axios from 'axios';
-import config from '../../../JsonIpConfig.js';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { UserContext } from '../../context/UserContext';
+import { registerUser } from '../../api/register';
 
 const RejestracjaScreen = ({ navigation }) => {
-    const { setUser } = useContext(UserContext);
     const [ userData, setUserData ] = useState({
         login: '',
         password: '',
@@ -26,7 +23,7 @@ const RejestracjaScreen = ({ navigation }) => {
         iloscTr: '',
         imageUri: "",
     });
-    
+
     const [ acceptedTerms, setAcceptedTerms ] = useState(false);
     const [ visible, setVisible ] = useState(false);
     const [ message, setMessage ] = useState('');
@@ -47,84 +44,8 @@ const RejestracjaScreen = ({ navigation }) => {
         hideDatePicker();
     };
 
-    const isLoginAvailable = async (login) => {
-        try {
-            const response = await axios.get(`${config.apiBaseUrl}/users`);
-            console.log('Odpowiedź z serwera:', response.data);
-
-            const loginExists = response.data.some(user => user.login === login);
-
-            return !loginExists;
-        } catch (error) {
-            console.error('Błąd podczas sprawdzania dostępności loginu:', error);
-            return false;
-        }
-    };
-
-    const handleRegister = async () => {
-        if (!userData.login || !userData.password || !userData.confirmPassword || !userData.imie || !userData.nazwisko || !userData.waga || !userData.wzrost || !userData.kroki || !userData.dataUr || !userData.iloscTr) {
-            setMessage('Wszystkie pola muszą być wypełnione');
-            setVisible(true);
-            return;
-        }
-
-        if (userData.password !== userData.confirmPassword) {
-            setMessage('Hasła nie pasują');
-            setVisible(true);
-            return;
-        }
-
-        const loginAvailable = await isLoginAvailable(userData.login);
-        if (!loginAvailable) {
-            setMessage('Login jest już zajęty');
-            setVisible(true);
-            return;
-        }
-
-        if (!acceptedTerms) {
-            setMessage('Musisz zaakceptować warunki użytkowania');
-            setVisible(true);
-            return;
-        }
-
-        if (parseFloat(userData.waga) <= 0 || parseFloat(userData.wzrost) <= 0) {
-            setMessage('Waga, wzrost muszą być większe niż 0');
-            setVisible(true);
-            return false;
-        }
-
-        if (parseInt(userData.kroki) < 0 || parseInt(userData.iloscTr) < 0) {
-            setMessage('Liczba kroków i liczba treningów nie mogą być ujemne');
-            setVisible(true);
-            return false;
-        }
-
-        const newUser = {
-            login: userData.login,
-            haslo: userData.password,
-            imie: userData.imie,
-            nazwisko: userData.nazwisko,
-            waga: parseFloat(userData.waga),
-            wzrost: parseFloat(userData.wzrost),
-            kroki: parseInt(userData.kroki),
-            cel: userData.cel,
-            iloscTr: parseInt(userData.iloscTr),
-            plec: userData.plec,
-            dataUr: userData.dataUr,
-            imageUri: userData.imageUri,
-        };
-
-        try {
-            await axios.post(`${config.apiBaseUrl}/users`, newUser);
-            setUser(newUser);
-            setMessage('Rejestracja zakończona sukcesem');
-            setVisible(true);
-            navigation.navigate('Login');
-        } catch (error) {
-            console.error('Błąd podczas zapisywania danych logowania:', error);
-            setMessage('Wystąpił błąd podczas rejestracji');
-            setVisible(true);
-        }
+    const handleRegister = () => {
+        registerUser(userData, acceptedTerms, setMessage, setVisible, navigation);
     };
 
     return (

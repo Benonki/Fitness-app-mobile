@@ -1,76 +1,88 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { UserContext } from '../UserContext';
+import { loadProductsFromAPI, updateUserProducts, clearUserProducts } from '../../api/eatedProducts';
+
+const DATE_STORAGE_KEY = '@lastDate';
 
 export const ProductContext = createContext();
 
-const PRODUCT_STORAGE_KEY = '@products';
-const DATE_STORAGE_KEY = '@lastDate';
-
 export const ProductProvider = ({ children }) => {
-  const [ products, setProducts ] = useState([]);
-  const [ lastDate, setLastDate ] = useState(null);
+  const { user } = useContext(UserContext);
+  const [products, setProducts] = useState([]);
+  const [lastDate, setLastDate] = useState(null);
 
   const loadProducts = async () => {
-    try {
-      const storedProducts = await AsyncStorage.getItem(PRODUCT_STORAGE_KEY);
-      const storedDate = await AsyncStorage.getItem(DATE_STORAGE_KEY);
+    if (!user) return;
 
+    try {
+      const storedDate = await AsyncStorage.getItem(DATE_STORAGE_KEY);
       const today = new Date().toLocaleDateString('pl-PL', {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
       });
 
-      if (storedDate && storedDate === today) {
-        if (storedProducts) {
-          setProducts(JSON.parse(storedProducts));
-        }
-      } else {
-		await clearProducts();
-		await Promise.all([
-        AsyncStorage.setItem('birthdayNotificationSent', 'false'),
-        AsyncStorage.setItem('stepGoalReached', 'false'),
-        AsyncStorage.setItem('caloriesGoalReached', 'false')
-    ]);
-}
+      const userData = await loadProductsFromAPI(user.id);
 
+      if (!storedDate || storedDate !== today) {
+        await updateUserProducts(user.id, []);
+
+        await Promise.all([
+          AsyncStorage.setItem(DATE_STORAGE_KEY, today),
+          AsyncStorage.setItem(`birthdayNotificationSent_${user.id}`, 'false'),
+          AsyncStorage.setItem(`stepGoalReached_${user.id}`, 'false'),
+          AsyncStorage.setItem(`caloriesGoalReached_${user.id}`, 'false'),
+        ]);
+        userData.eatenProducts = [];
+      }
       setLastDate(today);
-      await AsyncStorage.setItem(DATE_STORAGE_KEY, today);
+      setProducts(userData.eatenProducts || []);
     } catch (error) {
-      console.error('Error loading data:', error);
+      console.error('Błąd podczas ładowania produktów:', error);
     }
   };
 
-  const saveProducts = async (updatedProducts) => {
+  const addProduct = async (product) => {
+    if (!user) return;
+
+    if (!product || product.calories === 0 || product.fat === 0 || product.sugar === 0 || product.proteins === 0) {
+      console.error('Produkt ma nieprawidłowe lub puste dane');
+      return;
+    }
+
     try {
-      await AsyncStorage.setItem(PRODUCT_STORAGE_KEY, JSON.stringify(updatedProducts));
+      const userData = await loadProductsFromAPI(user.id);
+      const updatedProducts = userData.eatenProducts ? [...userData.eatenProducts, product] : [product];
+      await updateUserProducts(user.id, updatedProducts);
+      setProducts(updatedProducts);
     } catch (error) {
-      console.error('Error saving products:', error);
+      console.error('Błąd podczas dodawania produktu:', error);
     }
   };
 
-  const addProduct = (product) => {
-    setProducts((prevProducts) => {
-      const updatedProducts = [...prevProducts, product];
-      saveProducts(updatedProducts);
-      return updatedProducts;
-    });
-  };
 
-  const removeProduct = (index) => {
-    setProducts((prevProducts) => {
-      const updatedProducts = prevProducts.filter((_, i) => i !== index);
-      saveProducts(updatedProducts);
-      return updatedProducts;
-    });
+  const removeProduct = async (productIndex) => {
+    if (!user) return;
+
+    try {
+      const userData = await loadProductsFromAPI(user.id);
+      const updatedProducts = userData.eatenProducts.filter((_, index) => index !== productIndex);
+      await updateUserProducts(user.id, updatedProducts);
+      setProducts(updatedProducts);
+    } catch (error) {
+      console.error('Błąd podczas usuwania produktu:', error);
+    }
   };
 
   const clearProducts = async () => {
+    if (!user) return;
+
     try {
-      await AsyncStorage.removeItem(PRODUCT_STORAGE_KEY);
+      await clearUserProducts(user.id);
       setProducts([]);
     } catch (error) {
-      console.error('Error clearing products:', error);
+      console.error('Błąd podczas czyszczenia produktów:', error);
     }
   };
 
@@ -90,7 +102,7 @@ export const ProductProvider = ({ children }) => {
 
   useEffect(() => {
     loadProducts();
-  }, []);
+  }, [user]);
 
   return (
       <ProductContext.Provider

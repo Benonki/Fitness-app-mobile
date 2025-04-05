@@ -3,10 +3,8 @@ import { View, TextInput, ActivityIndicator, Text, TouchableOpacity } from 'reac
 import { Snackbar, Checkbox } from 'react-native-paper';
 import Svg, { Defs, LinearGradient as SvgLinearGradient, Stop, Text as SvgText } from 'react-native-svg';
 import styles from './StyleSheet.js';
-import * as SecureStore from 'expo-secure-store';
-import axios from 'axios';
-import config from '../../../JsonIpConfig.js';
 import { UserContext } from '../../context/UserContext';
+import { checkStoredData, handleLogin } from '../../api/auth';
 
 const LoginScreen = ({ navigation }) => {
     const { setUser } = useContext(UserContext);
@@ -17,87 +15,12 @@ const LoginScreen = ({ navigation }) => {
     const [ message, setMessage ] = useState('');
     const [ loading, setLoading ] = useState(true);
 
-    const checkStoredData = async () => {
-        try {
-            const token = await SecureStore.getItemAsync('userToken');
-            const storedLogin = await SecureStore.getItemAsync('userLogin');
-            const storedPassword = await SecureStore.getItemAsync('userPassword');
-
-            if (token && storedLogin && storedPassword) {
-                const response = await axios.get(`${config.apiBaseUrl}/users`);
-                const users = response.data;
-
-                const user = users.find(
-                    (user) => user.login === storedLogin && user.haslo === storedPassword
-                );
-
-                if (user) {
-                    setUser(user);
-                    navigation.navigate('DrawerNav');
-                }
-            }
-        } catch (error) {
-            console.error('Błąd podczas autologowania:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
     useEffect(() => {
-        checkStoredData();
+        checkStoredData(setUser, navigation, setLoading);
     }, []);
 
-    const saveData = async (token, login, password) => {
-        try {
-            if (autoLogin) {
-                await SecureStore.setItemAsync('userToken', token);
-            }
-        } catch (error) {
-            console.error('Błąd podczas zapisywania danych:', error);
-        } finally {
-            await SecureStore.setItemAsync('userLogin', login);
-            await SecureStore.setItemAsync('userPassword', password);
-        }
-    };
-
-    const handleLogin = () => {
-        if (!login || !password) {
-            setMessage('Wszystkie pola muszą być wypełnione');
-            setVisible(true);
-            return;
-        }
-
-        axios.get(`${config.apiBaseUrl}/users`)
-            .then(function (response) {
-                const users = response.data;
-                const user = users.find(user => user.login === login);
-
-                if (user && user.haslo === password) {
-                    const token = `${Date.now()}`;
-                    saveData(token, login, password)
-                        .then(() => {
-                            setUser(user);
-                            setMessage('Zalogowano pomyślnie');
-                            setVisible(true);
-                            navigation.navigate('DrawerNav');
-                        })
-                        .catch(() => {
-                            setMessage('Błąd podczas zapisywania danych');
-                            setVisible(true);
-                        });
-                } else {
-                    setMessage('Nieprawidłowy login lub hasło');
-                    setVisible(true);
-                }
-            })
-            .catch(function (error) {
-                console.error('Błąd podczas pobierania użytkowników:', error);
-                setMessage('Błąd podczas logowania');
-                setVisible(true);
-            })
-            .finally(function () {
-
-            });
+    const handleLoginPress = () => {
+        handleLogin(login, password, setUser, setMessage, setVisible, navigation, autoLogin);
     };
 
     if (loading) {
@@ -167,7 +90,7 @@ const LoginScreen = ({ navigation }) => {
 
             <TouchableOpacity
                 style={styles.button}
-                onPress={handleLogin}
+                onPress={handleLoginPress}
             >
                 <Text style={styles.buttonText}>Zaloguj się</Text>
             </TouchableOpacity>

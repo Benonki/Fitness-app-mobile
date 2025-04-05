@@ -1,17 +1,20 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { PermissionsAndroid, Platform } from 'react-native';
 import { Pedometer } from 'expo-sensors';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { UserContext } from '../UserContext';
+import { checkAndResetSteps, loadStepData, saveSteps } from '../../api/steps';
 
 export const StepContext = createContext();
 
 export const StepProvider = ({ children }) => {
-    const [ pedometerAvailability, setPedometerAvailability ] = useState(null);
-    const [ stepCount, setStepCount ] = useState(0);
-    const [ initialSteps, setInitialSteps ] = useState(0);
-    const [ lastDate, setLastDate ] = useState(null);
+    const { user } = useContext(UserContext);
+    const [pedometerAvailability, setPedometerAvailability] = useState(null);
+    const [stepCount, setStepCount] = useState(0);
+    const [lastSavedStep, setLastSavedStep] = useState(0);
+    const stepOffset = useRef(0);
+    const [stepCounter, setStepCounter] = useState(null);
 
-    async function requestPedometerPermission() {
+    const requestPedometerPermission = async () => {
         if (Platform.OS === 'android') {
             const result = await PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.ACTIVITY_RECOGNITION
@@ -19,75 +22,61 @@ export const StepProvider = ({ children }) => {
             return result === PermissionsAndroid.RESULTS.GRANTED;
         }
         return true;
-    }
-
-    const loadStepCount = async () => {
-        try {
-            const savedStepCount = await AsyncStorage.getItem('stepCount');
-            const savedDate = await AsyncStorage.getItem('stepCountDate');
-
-            const today = new Date().toLocaleDateString('pl-PL', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-            });
-
-            if (savedDate && savedDate !== today) {
-                setStepCount(0);
-                setInitialSteps(0);
-                await AsyncStorage.setItem('stepCount', '0');
-            } else {
-                if (savedStepCount !== null) {
-                    setInitialSteps(parseInt(savedStepCount, 10));
-                    setStepCount(parseInt(savedStepCount, 10));
-                }
-            }
-
-            setLastDate(today);
-            await AsyncStorage.setItem('stepCountDate', today);
-        } catch (error) {
-            console.error("Error loading step count:", error);
-        }
-    };
-
-    const saveStepCount = async (newStepCount) => {
-        try {
-            if (lastDate) {
-                await AsyncStorage.setItem('stepCount', newStepCount.toString());
-                await AsyncStorage.setItem('stepCountDate', lastDate);
-            }
-        } catch (error) {
-            console.error("Error saving step count:", error);
-        }
     };
 
     useEffect(() => {
+        if (!user) {
+            if (stepCounter) {
+                stepCounter.remove();
+                setStepCounter(null);
+            }
+            return;
+        }
+
         const startPedometer = async () => {
+            const resetSteps = await checkAndResetSteps(user.id);
+            if (resetSteps !== null) {
+                stepOffset.current = resetSteps;
+                setStepCount(resetSteps);
+                setLastSavedStep(resetSteps);
+            }
+
             const permission = await requestPedometerPermission();
             if (!permission) {
-                setPedometerAvailability("Permission not granted");
+                setPedometerAvailability('Permission not granted');
                 return;
             }
 
-            loadStepCount();
+            const initialSteps = await loadStepData(user.id);
+            stepOffset.current = initialSteps;
+            setStepCount(initialSteps);
+            setLastSavedStep(initialSteps);
 
-            const stepCounter = Pedometer.watchStepCount(result => {
-                    setStepCount(initialSteps + result.steps);
-                    saveStepCount(initialSteps + result.steps);
+            const newStepCounter = Pedometer.watchStepCount(result => {
+                const newStepCount = stepOffset.current + result.steps;
+                setStepCount(newStepCount);
+                saveSteps(user.id, newStepCount, lastSavedStep).then((updatedSteps) => {
+                    setLastSavedStep(updatedSteps);
+                });
             });
 
-            Pedometer.isAvailableAsync().then(
-                result => setPedometerAvailability(result ? "Available" : "Not available"),
-                error => setPedometerAvailability("Error: " + error)
-            );
+            setStepCounter(newStepCounter);
 
-            return () => {
-                stepCounter && stepCounter.remove();
-            };
+            Pedometer.isAvailableAsync().then(
+                result => setPedometerAvailability(result ? 'Available' : 'Not available'),
+                error => setPedometerAvailability('Error: ' + error)
+            );
         };
 
         startPedometer();
-    }, [lastDate]);
+
+        return () => {
+            if (stepCounter) {
+                stepCounter.remove();
+                setStepCounter(null);
+            }
+        };
+    }, [user]);
 
     return (
         <StepContext.Provider value={{ stepCount, pedometerAvailability }}>
