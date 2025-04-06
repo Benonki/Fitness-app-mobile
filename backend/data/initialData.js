@@ -37,10 +37,10 @@ const initializeData = async () => {
       );
 
       await User.insertMany(usersWithHashedPasswords);
-      console.log('Initial data inserted with hashed passwords');
+      console.log('Wprowadzono podstawowe dane');
     }
   } catch (error) {
-    console.error('Error initializing data:', error);
+    console.error('Error podczas wprowadzania podstawowych danych:', error);
   }
 };
 

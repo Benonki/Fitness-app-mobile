@@ -45,15 +45,23 @@ export const ProductProvider = ({ children }) => {
 
   const addProduct = async (product) => {
     if (!user) return;
-
-    if (!product || product.calories === 0 || product.fat === 0 || product.sugar === 0 || product.proteins === 0) {
+    if (!product || product.calories === 0) {
       console.error('Produkt ma nieprawidłowe lub puste dane');
       return;
     }
 
+    const productWithDefaults = {
+      name: product.name || '',
+      calories: product.calories || 0,
+      fat: product.fat || 0,
+      sugar: product.sugar || 0,
+      proteins: product.proteins || 0,
+    };
     try {
       const userData = await loadProductsFromAPI(user.id);
-      const updatedProducts = userData.eatenProducts ? [...userData.eatenProducts, product] : [product];
+      const updatedProducts = userData.eatenProducts
+          ? [...userData.eatenProducts, productWithDefaults]
+          : [productWithDefaults];
       await updateUserProducts(user.id, updatedProducts);
       setProducts(updatedProducts);
     } catch (error) {

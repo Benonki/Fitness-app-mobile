@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const Notification = require('./Notification');
-const Product = require('./Product');
+const notificationSchema = require('./Notification');
+const productSchema = require('./Product');
 
 const userSchema = new mongoose.Schema({
   login: { type: String, required: true, unique: true },
@@ -20,8 +20,8 @@ const userSchema = new mongoose.Schema({
   plec: { type: String, required: true, enum: ['Mężczyzna', 'Kobieta'] },
   dataUr: { type: String, required: true },
   imageUri: { type: String, default: '' },
-  notifications: [Notification.schema],
-  eatenProducts: [Product.schema],
+  notifications: [notificationSchema],
+  eatenProducts: [productSchema],
   lastSyncDate: { type: Date, default: new Date().toISOString().split('T')[0] }
 });
 

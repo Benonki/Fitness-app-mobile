@@ -5,7 +5,27 @@ const bcrypt = require('bcryptjs');
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.find();
-    res.json(users);
+
+    const formattedUsers = users.map(user => ({
+      id: user._id,
+      login: user.login,
+      imie: user.imie,
+      nazwisko: user.nazwisko,
+      waga: user.waga,
+      wzrost: user.wzrost,
+      kroki: user.kroki,
+      zrKroki: user.zrKroki,
+      cel: user.cel,
+      iloscTr: user.iloscTr,
+      plec: user.plec,
+      dataUr: user.dataUr,
+      imageUri: user.imageUri,
+      lastSyncDate: user.lastSyncDate,
+      notifications: user.notifications || [],
+      eatenProducts: user.eatenProducts || []
+    }));
+
+    res.json(formattedUsers);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

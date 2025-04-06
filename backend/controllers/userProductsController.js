@@ -16,7 +16,7 @@ exports.updateUserProducts = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
     const newProducts = req.body.eatenProducts.filter(product =>
-        product.calories > 0 && product.fat > 0 && product.sugar > 0 && product.proteins > 0
+        product.calories > 0
     );
 
     user.eatenProducts = newProducts;

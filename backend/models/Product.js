@@ -8,4 +8,4 @@ const productSchema = new mongoose.Schema({
   proteins: { type: Number, default: 0, min: 0 }
 }, { _id: false });
 
-module.exports = mongoose.model('Product', productSchema);
+module.exports = productSchema;
