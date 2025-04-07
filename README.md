@@ -52,7 +52,7 @@ A fitness mobile app built with JavaScript and React Native that tracks steps, c
 ## Running the App
 1. Change the IP in src/api/axiosInstance.js to your computer's local IPv4 (You have to be in the same network on your phone and computer for this to work).
 2. Change the IP in backend/app.js to your computer's local IPv4 but only first 3 octets.
-3. You can change default key, mongoDB connection and expiration date in .env file in /backend
+3. You can change default key, key expiration date, server port and mongoDB connection in .env file in /backend
 4. Open console nr 1 and get into /backend:
 	```bash
 	cd backend
