@@ -7,7 +7,6 @@ router.get('/public/status', (req, res) => {
     res.json({ status: 'Server is running', version: '1.0' });
 });
 router.post('/', userController.createUser);
-router.get('/', userController.getAllLogins);
 
 router.use(authMiddleware.authenticate);
 

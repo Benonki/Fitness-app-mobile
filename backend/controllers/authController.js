@@ -2,11 +2,21 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-exports.getAllUsers = async (req, res) => {
+exports.getUserInfo = async (req, res) => {
   try {
-    const users = await User.find();
+    const userLogin = req.query.login;
 
-    const formattedUsers = users.map(user => ({
+    if (!userLogin) {
+      return res.status(400).json({ message: 'Login użytkownika jest wymagany' });
+    }
+
+    const user = await User.findOne({ login: userLogin });
+
+    if (!user) {
+      return res.status(404).json({ message: 'Użytkownik nie znaleziony' });
+    }
+
+    const formattedUser = {
       id: user._id,
       login: user.login,
       imie: user.imie,
@@ -23,9 +33,9 @@ exports.getAllUsers = async (req, res) => {
       lastSyncDate: user.lastSyncDate,
       notifications: user.notifications || [],
       eatenProducts: user.eatenProducts || []
-    }));
+    };
 
-    res.json(formattedUsers);
+    res.json(formattedUser);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -105,20 +115,22 @@ exports.checkLoginAvailability = async (req, res) => {
     if (!login) {
       return res.status(400).json({
         success: false,
-        message: 'Login jest wymagany'
+        message: 'Login jest wymagany',
+        available: false
       });
     }
 
     const user = await User.findOne({ login });
     res.json({
       success: true,
-      available: !user // true - dostepny, false - zajety
+      available: !user // true jeśli login dostępny, false jeśli zajęty
     });
   } catch (error) {
     console.error('Błąd sprawdzania loginu:', error);
     res.status(500).json({
       success: false,
-      message: 'Wystąpił błąd podczas sprawdzania dostępności loginu'
+      message: 'Wystąpił błąd podczas sprawdzania dostępności loginu',
+      available: false
     });
   }
 };

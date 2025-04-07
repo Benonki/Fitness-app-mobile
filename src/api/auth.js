@@ -8,22 +8,17 @@ export const checkStoredData = async (setUser, navigation, setLoading) => {
         const AutologinMode = await SecureStore.getItemAsync('AutoLoginMode');
 
         if (token && storedLogin && AutologinMode === 'true') {
-            // Sprawdź ważność tokena
-            const response = await axiosInstance.get('/auth', {
+            const response = await axiosInstance.get(`/auth?login=${storedLogin}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            // Znajdź użytkownika
-            const user = response.data.find(u => u.login === storedLogin);
-
-            if (user) {
-                setUser(user);
+            if (response.data) {
+                setUser(response.data);
                 navigation.navigate('DrawerNav');
             }
         }
     } catch (error) {
         console.error('Błąd podczas autologowania:', error);
-        // Wyczyść nieprawidłowe dane
         await SecureStore.deleteItemAsync('userToken');
     } finally {
         setLoading(false);

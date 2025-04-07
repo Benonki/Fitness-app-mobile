@@ -13,22 +13,6 @@ exports.getUser = async (req, res) => {
   }
 };
 
-exports.getAllLogins = async (req, res) => {
-  try {
-    const users = await User.find().select('login -_id'); // same loginy
-    const logins = users.map(user => user.login);
-    res.json({
-      success: true,
-      logins
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
-  }
-};
-
 exports.createUser = async (req, res) => {
   try {
     const existingUser = await User.findOne({ login: req.body.login });

@@ -2,10 +2,10 @@ import axiosInstance from './axiosInstance';
 
 export const isLoginAvailable = async (login) => {
     try {
-        const response = await axiosInstance.get('/users');
-        const logins = response.data.logins || [];
-        const loginExists = logins.includes(login);
-        return !loginExists;
+        const response = await axiosInstance.get('/auth/check-login', {
+            params: { login }
+        });
+        return response.data.available; // Zwraca true/false w zależności od dostępności
     } catch (error) {
         console.error('Błąd podczas sprawdzania dostępności loginu:', error);
         return false;
@@ -69,7 +69,7 @@ export const registerUser = async (userData, acceptedTerms, setMessage, setVisib
     };
 
     try {
-        const response = await axiosInstance.post('/users', newUser);
+        await axiosInstance.post('/users', newUser);
         setMessage('Rejestracja zakończona sukcesem');
         setVisible(true);
         navigation.navigate('Login');

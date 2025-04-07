@@ -1,6 +1,6 @@
 # Fitness App Mobile
 
-A fitness app built with JavaScript and React Native that tracks steps, calories, and more, powered by an Express.js backend with MongoDB.
+A fitness mobile app built with JavaScript and React Native that tracks steps, calories, and more, powered by an Express.js backend with MongoDB.
 
 ## Requirements
 
@@ -41,11 +41,11 @@ A fitness app built with JavaScript and React Native that tracks steps, calories
    ```bash
     docker run --name fitness-mongo -d -p 27017:27017 -v mongo_data:/data/db mongo:latest
     ```
-3. To stop docker type:
+   - To stop docker type:
    ```bash
    docker stop fitness-mongo
    ```
-4. To start docker again type:
+   - To start docker again type:
    ```bash
    docker start fitness-mongo
    ```
