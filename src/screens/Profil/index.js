@@ -45,18 +45,17 @@ const ProfilScreen = ({ navigation }) => {
 
         if (!result.canceled) {
             try {
-                const imageUri = result.assets[0].uri;
-                const fileName = imageUri.split('/').pop();
-                const newPath = `${FileSystem.documentDirectory}${fileName}`;
-
-                await FileSystem.moveAsync({
-                    from: imageUri,
-                    to: newPath,
+                // Konwertuj obraz na base64
+                const base64Image = await FileSystem.readAsStringAsync(result.assets[0].uri, {
+                    encoding: FileSystem.EncodingType.Base64,
                 });
-                setImage(newPath);
-                handleChange('imageUri', newPath);
+
+                // Ustaw obraz w formacie base64
+                setImage(`data:image/jpeg;base64,${base64Image}`);
+                handleChange('imageUri', `data:image/jpeg;base64,${base64Image}`);
             } catch (error) {
-                console.error(error);
+                console.error('Błąd podczas przetwarzania obrazu:', error);
+                Alert.alert('Błąd', 'Nie udało się załadować obrazu');
             }
         }
     };
