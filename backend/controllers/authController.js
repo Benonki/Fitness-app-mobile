@@ -32,7 +32,12 @@ exports.getUserInfo = async (req, res) => {
       imageUri: user.imageUri,
       lastSyncDate: user.lastSyncDate,
       notifications: user.notifications || [],
-      eatenProducts: user.eatenProducts || []
+      eatenProducts: user.eatenProducts || [],
+      notificationFlags: user.notificationFlags || {
+        birthdaySent: false,
+        stepsGoalSent: false,
+        caloriesGoalSent: false
+      }
     };
 
     res.json(formattedUser);
@@ -95,7 +100,12 @@ exports.login = async (req, res) => {
         imageUri: user.imageUri,
         lastSyncDate: user.lastSyncDate,
         notifications: user.notifications || [],
-        eatenProducts: user.eatenProducts || []
+        eatenProducts: user.eatenProducts || [],
+        notificationFlags: user.notificationFlags || {
+          birthdaySent: false,
+          stepsGoalSent: false,
+          caloriesGoalSent: false
+        }
       }
     });
 

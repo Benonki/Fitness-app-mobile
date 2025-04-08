@@ -8,5 +8,6 @@ router.use(authMiddleware.authenticate);
 router.get('/:userId', notificationsController.getNotifications);
 router.post('/:userId/add', notificationsController.addNotification);
 router.delete('/:userId/:notificationId', notificationsController.deleteNotification);
+router.patch('/:userId/notification-flags', notificationsController.updateNotificationFlag);
 
 module.exports = router;

@@ -9,6 +9,6 @@ router.use(authMiddleware.authenticate);
 
 router.get('/:userId', userController.getUser);
 router.put('/:userId', userController.updateUser);
-router.patch('/:userId', userController.patchUser);
+router.patch('/:userId/reset-daily', userController.resetDaily);
 
 module.exports = router;

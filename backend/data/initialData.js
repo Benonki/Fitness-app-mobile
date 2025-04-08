@@ -3,7 +3,6 @@ const bcrypt = require('bcryptjs');
 
 const initialUsers = [
   {
-    id: "f5a1",
     login: "Test",
     haslo: "Test",
     imie: "TestImię",
@@ -11,14 +10,19 @@ const initialUsers = [
     waga: 101,
     wzrost: 200,
     kroki: 20,
-    zrKroki: 37,
+    zrKroki: 0,
     cel: "Przybieranie na wadze",
     iloscTr: 5,
     plec: "Mężczyzna",
     dataUr: "14.03.2025",
     imageUri: "",
     notifications: [],
-    eatenProducts: []
+    eatenProducts: [],
+    notificationFlags: {
+      birthdaySent: false,
+      stepsGoalSent: false,
+      caloriesGoalSent: false
+    }
   }
 ];
 

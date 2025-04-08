@@ -65,7 +65,12 @@ export const registerUser = async (userData, acceptedTerms, setMessage, setVisib
         dataUr: userData.dataUr,
         imageUri: userData.imageUri || "",
         notifications: [],
-        eatenProducts: []
+        eatenProducts: [],
+        notificationFlags: {
+            birthdaySent: false,
+            stepsGoalSent: false,
+            caloriesGoalSent: false
+        }
     };
 
     try {

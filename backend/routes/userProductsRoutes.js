@@ -7,6 +7,5 @@ router.use(authMiddleware.authenticate);
 
 router.get('/:userId', userProductsController.getUserProducts);
 router.patch('/:userId/update', userProductsController.updateUserProducts);
-router.patch('/:userId/clear', userProductsController.clearUserProducts);
 
 module.exports = router;

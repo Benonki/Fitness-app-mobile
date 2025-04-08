@@ -84,18 +84,34 @@ exports.updateUser = async (req, res) => {
   }
 };
 
-exports.patchUser = async (req, res) => {
+exports.resetDaily = async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(
-      req.user._id,
-      { $set: req.body },
-      { new: true, runValidators: true }
+        req.user._id,
+        {
+          zrKroki: 0,
+          eatenProducts: [],
+          'notificationFlags.birthdaySent': false,
+          'notificationFlags.stepsGoalSent': false,
+          'notificationFlags.caloriesGoalSent': false
+        },
+        { new: true }
     );
+
     if (!user) {
-      return res.status(404).json({ message: 'Uzytkownik nie znaleziony' });
+      return res.status(404).json({ message: 'Użytkownik nie znaleziony' });
     }
-    res.json(user);
+
+    res.json({
+      message: 'Dzienne dane zostały zresetowane',
+      user: {
+        zrKroki: user.zrKroki,
+        eatenProducts: user.eatenProducts,
+        notificationFlags: user.notificationFlags
+      }
+    });
   } catch (error) {
+    console.error('Błąd podczas resetowania danych dziennych:', error);
     res.status(400).json({ message: error.message });
   }
 };

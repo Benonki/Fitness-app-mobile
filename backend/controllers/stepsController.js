@@ -29,22 +29,3 @@ exports.updateSteps = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
-
-exports.resetSteps = async (req, res) => {
-  try {
-    const user = await User.findByIdAndUpdate(
-        req.user._id,
-      { 
-        zrKroki: 0,
-        lastSyncDate: new Date().toISOString().split('T')[0]
-      },
-      { new: true }
-    );
-    if (!user) {
-      return res.status(404).json({ message: 'Uzytkownik nie znaleziony' });
-    }
-    res.json({ zrKroki: user.zrKroki });
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};

@@ -2,10 +2,11 @@ import React, { useContext, useEffect, useState } from "react";
 import { Text, View, TouchableOpacity, Image, Alert } from "react-native";
 import styles from './StyleSheet.js';
 import Svg, { Defs, LinearGradient as SvgLinearGradient, Stop, Text as SvgText } from 'react-native-svg';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from "expo-secure-store";
 import { useNotifications } from "../../context/NotificationContext";
 import { UserContext } from "../../context/UserContext";
+import { resetDaily } from '../../api/accounts';
+import { setNotificationFlag } from '../../api/notifications';
 
 const EkranGlownyScreen = ({ navigation }) => {
 
@@ -26,30 +27,47 @@ const EkranGlownyScreen = ({ navigation }) => {
     }, [notifications, user?.id]);
 
     useEffect(() => {
+        const checkDateAndReset = async () => {
+            if (!user) return;
+
+            try {
+                const today = new Date().toISOString().split('T')[0];
+                const userSyncDate = new Date(user.lastSyncDate).toISOString().split('T')[0];
+                if (userSyncDate !== today) {
+                    await resetDaily(user.id);
+                }
+            } catch (error) {
+                console.error('Błąd podczas resetowania danych:', error);
+            }
+        };
+
+        checkDateAndReset();
+    }, [user]);
+
+    useEffect(() => {
         if(!user) return;
         const sendBirthdayNotification = async () => {
             const today = new Date().toLocaleDateString().split('.', 2);
             const userBirthday = user.dataUr.split('.', 2);
 
-            if (today[0] === userBirthday[0] && today[1] === userBirthday[1]) {
+            if (today[0] === userBirthday[0] && today[1] === userBirthday[1] && !user.notificationFlags?.birthdaySent) {
                 try {
-                    const flag = await AsyncStorage.getItem(`birthdayNotificationSent_${user.id}`);
-                    if (flag !== 'true') {
-                        const newNotification = {
-                            id: new Date().getTime(),
-                            title: "Wszystkiego Najlepszego🎉",
-                            message: `Wszystkiego najlepszego ${user.imie}🎂`
-                        };
-                        await AsyncStorage.setItem(`birthdayNotificationSent_${user.id}`, 'true');
-                        addUserNotification(user.id, newNotification);
-                    }
+                    const newNotification = {
+                        id: new Date().getTime(),
+                        title: "Wszystkiego Najlepszego🎉",
+                        message: `Wszystkiego najlepszego ${user.imie}🎂`
+                    };
+                    const updatedUser = await setNotificationFlag(user.id, 'birthdaySent', true);
+                    setUser(updatedUser);
+                    await addUserNotification(user.id, newNotification);
                 } catch (error) {
-                    console.error('Błąd podczas sprawdzania lub ustawiania flagi:', error);
+                    console.error('Błąd podczas wysyłania powiadomienia urodzinowego:', error);
                 }
             }
         };
         sendBirthdayNotification();
     }, [user]);
+
     const handleLogout = async () => {
         try {
             await SecureStore.deleteItemAsync('userToken');

@@ -27,19 +27,3 @@ exports.updateUserProducts = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
-
-exports.clearUserProducts = async (req, res) => {
-  try {
-    const user = await User.findByIdAndUpdate(
-        req.user._id,
-      { eatenProducts: [] },
-      { new: true }
-    );
-    if (!user) {
-      return res.status(404).json({ message: 'Uzytkownik nie znaleziony' });
-    }
-    res.json(user.eatenProducts);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};

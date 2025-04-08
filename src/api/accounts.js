@@ -28,3 +28,14 @@ export const updateUserData = async (userId, updatedData) => {
         throw new Error('Nie udało się zaktualizować danych użytkownika');
     }
 };
+
+export const resetDaily = async (userId) => {
+    try {
+        const response = await axiosInstance.patch(`/users/${userId}/reset-daily`);
+        console.log('Dzienne resetowanie zwróciło:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Błąd podczas resetowania danych dziennych:', error);
+        throw new Error('Nie udało się zresetować danych dziennych');
+    }
+};

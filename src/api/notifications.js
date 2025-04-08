@@ -29,3 +29,16 @@ export const deleteNotification = async (userId, notificationId) => {
         throw error;
     }
 };
+
+export const setNotificationFlag = async (userId, flagName, value) => {
+    try {
+        const response = await axiosInstance.patch(`/notifications/${userId}/notification-flags`, {
+            flagName,
+            value
+        });
+        return response.data.user;
+    } catch (error) {
+        console.error('Błąd podczas aktualizacji flagi powiadomienia:', error);
+        throw new Error('Nie udało się zaktualizować flagi powiadomienia');
+    }
+};

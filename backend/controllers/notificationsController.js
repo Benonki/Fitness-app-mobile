@@ -60,3 +60,28 @@ exports.deleteNotification = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+exports.updateNotificationFlag = async (req, res) => {
+  try {
+    const { flagName, value } = req.body;
+    const update = { [`notificationFlags.${flagName}`]: value };
+
+    const user = await User.findByIdAndUpdate(
+        req.user._id,
+        { $set: update },
+        { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: 'Użytkownik nie znaleziony' });
+    }
+
+    res.json({
+      message: 'Flaga powiadomienia została zaktualizowana',
+      user
+    });
+  } catch (error) {
+    console.error('Błąd podczas aktualizacji flagi powiadomienia:', error);
+    res.status(400).json({ message: error.message });
+  }
+};

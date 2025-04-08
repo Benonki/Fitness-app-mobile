@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 import { PermissionsAndroid, Platform } from 'react-native';
 import { Pedometer } from 'expo-sensors';
 import { UserContext } from '../UserContext';
-import { checkAndResetSteps, loadStepData, saveSteps } from '../../api/steps';
+import { loadStepData, saveSteps } from '../../api/steps';
 
 export const StepContext = createContext();
 
@@ -34,13 +34,6 @@ export const StepProvider = ({ children }) => {
         }
 
         const startPedometer = async () => {
-            const resetSteps = await checkAndResetSteps(user.id);
-            if (resetSteps !== null) {
-                stepOffset.current = resetSteps;
-                setStepCount(resetSteps);
-                setLastSavedStep(resetSteps);
-            }
-
             const permission = await requestPedometerPermission();
             if (!permission) {
                 setPedometerAvailability('Permission not granted');

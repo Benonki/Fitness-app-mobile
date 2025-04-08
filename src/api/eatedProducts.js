@@ -18,12 +18,3 @@ export const updateUserProducts = async (userId, products) => {
         throw error;
     }
 };
-
-export const clearUserProducts = async (userId) => {
-    try {
-        await axiosInstance.patch(`/user-products/${userId}/clear`, { eatenProducts: [] });
-    } catch (error) {
-        console.error('Błąd podczas czyszczenia produktów:', error);
-        throw error;
-    }
-};

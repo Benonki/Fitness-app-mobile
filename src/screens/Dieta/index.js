@@ -1,15 +1,15 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Text, View, TouchableOpacity  } from 'react-native';
 import CircularProgress from "react-native-circular-progress-indicator";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StepContext } from '../../context/StepContext';
 import { ProductContext } from '../../context/ProductContext';
 import styles from './StyleSheet.js';
 import { useNotifications } from '../../context/NotificationContext';
 import { UserContext } from '../../context/UserContext';
+import { setNotificationFlag } from '../../api/notifications';
 
 const DietaScreen = ({ navigation }) => {
-    const { user } = useContext(UserContext);
+    const { user, setUser} = useContext(UserContext);
     const { stepCount, pedometerAvailability } = useContext(StepContext);
     const [ maxSteps, setMaxSteps ] = useState(0);
     const { getTotalNutrients } = useContext(ProductContext);
@@ -84,33 +84,32 @@ const DietaScreen = ({ navigation }) => {
 
     useEffect(() => {
         const checkGoalsAndSendNotifications = async () => {
-            if (!isDataLoaded) return;
+            if (!isDataLoaded || !user) return;
 
             try {
-                const stepGoalFlag = await AsyncStorage.getItem(`stepGoalReached_${user.id}`);
-                const caloriesGoalFlag = await AsyncStorage.getItem(`caloriesGoalReached_${user.id}`);
-
-                if (stepCount >= maxSteps && stepGoalFlag !== 'true') {
+                if (stepCount >= maxSteps && !user.notificationFlags?.stepsGoalSent) {
                     const stepNotification = {
                         id: new Date().getTime(),
                         title: "Gratulacje! 😀",
                         message: "Osiągnąłeś swój cel kroków 👟!!!"
                     };
-                    await AsyncStorage.setItem(`stepGoalReached_${user.id}`, 'true');
-                    addUserNotification(user.id, stepNotification);
+                    const updatedUser = await setNotificationFlag(user.id, 'stepsGoalSent', true);
+                    setUser(updatedUser);
+                    await addUserNotification(user.id, stepNotification);
                 }
 
-                if (consumedCalories >= maxCalories && caloriesGoalFlag !== 'true') {
+                if (consumedCalories >= maxCalories && !user.notificationFlags?.caloriesGoalSent) {
                     const caloriesNotification = {
                         id: new Date().getTime(),
                         title: "Gratulacje! 😀",
                         message: "Osiągnąłeś swój cel kalorii 🍕!!!"
                     };
-                    await AsyncStorage.setItem(`caloriesGoalReached_${user.id}`, 'true');
-                    addUserNotification(user.id, caloriesNotification);
+                    const updatedUser = await setNotificationFlag(user.id, 'caloriesGoalSent', true);
+                    setUser(updatedUser);
+                    await addUserNotification(user.id, caloriesNotification);
                 }
             } catch (error) {
-                console.error('Błąd podczas sprawdzania lub ustawiania flagi w AsyncStorage:', error);
+                console.error('Błąd podczas aktualizacji flag powiadomień:', error);
             }
         };
 

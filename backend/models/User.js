@@ -22,7 +22,12 @@ const userSchema = new mongoose.Schema({
   imageUri: { type: String, default: '' },
   notifications: [notificationSchema],
   eatenProducts: [productSchema],
-  lastSyncDate: { type: Date, default: new Date().toISOString().split('T')[0] }
+  lastSyncDate: { type: Date, default: new Date().toISOString().split('T')[0] },
+  notificationFlags: {
+    birthdaySent: { type: Boolean, default: false },
+    stepsGoalSent: { type: Boolean, default: false },
+    caloriesGoalSent: { type: Boolean, default: false }
+  }
 });
 
 module.exports = mongoose.model('User', userSchema);
