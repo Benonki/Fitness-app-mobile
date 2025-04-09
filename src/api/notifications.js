@@ -39,6 +39,6 @@ export const setNotificationFlag = async (userId, flagName, value) => {
         return response.data.user;
     } catch (error) {
         console.error('Błąd podczas aktualizacji flagi powiadomienia:', error);
-        throw new Error('Nie udało się zaktualizować flagi powiadomienia');
+        return null;
     }
 };

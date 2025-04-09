@@ -57,9 +57,15 @@ const EkranGlownyScreen = ({ navigation }) => {
                         title: "Wszystkiego Najlepszego🎉",
                         message: `Wszystkiego najlepszego ${user.imie}🎂`
                     };
-                    const updatedUser = await setNotificationFlag(user.id, 'birthdaySent', true);
-                    setUser(updatedUser);
-                    await addUserNotification(user.id, newNotification);
+                    addUserNotification(user.id, newNotification);
+                    setUser({
+                        ...user,
+                        notificationFlags: {
+                            ...user.notificationFlags,
+                            birthdaySent: true
+                        }
+                    });
+                    setNotificationFlag(user.id, 'birthdaySent', true).catch(console.error);
                 } catch (error) {
                     console.error('Błąd podczas wysyłania powiadomienia urodzinowego:', error);
                 }

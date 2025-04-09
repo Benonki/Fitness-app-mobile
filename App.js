@@ -15,16 +15,16 @@ LogBox.ignoreLogs([ // Ignorowanie ostrzeżenia dotyczącego defaultProps (ostrz
 function App() {
     return (
     <UserProvider>
-     <ProductProvider>
-      <StepProvider>
-        <NotificationsProvider>
+     <NotificationsProvider>
+      <ProductProvider>
+       <StepProvider>
          <NavigationContainer>
             <StackNav/>
          </NavigationContainer>
-        </NotificationsProvider>
        </StepProvider>
       </ProductProvider>
-     </UserProvider>
+     </NotificationsProvider>
+    </UserProvider>
     );
 }
 

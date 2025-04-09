@@ -25,7 +25,7 @@ const GradientHeader = () => (
 
 const DrawerNav = () => {
 
-    const {notifications} = useNotifications();
+    const { notifications } = useNotifications();
     const [userNotificationCount, setUserNotificationCount] = useState(0);
     const { user } = useContext(UserContext);
 
@@ -33,7 +33,7 @@ const DrawerNav = () => {
         if (user?.id && notifications[user.id]) {
             setUserNotificationCount(notifications[user.id].length);
         }
-    }, [notifications, user?.id]);
+    }, [notifications, user?.id, user?.notifications]);
     
     return (
         <Drawer.Navigator

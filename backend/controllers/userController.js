@@ -86,11 +86,13 @@ exports.updateUser = async (req, res) => {
 
 exports.resetDaily = async (req, res) => {
   try {
+    const today = new Date().toISOString().split('T')[0];
     const user = await User.findByIdAndUpdate(
         req.user._id,
         {
           zrKroki: 0,
           eatenProducts: [],
+          lastSyncDate: today,
           'notificationFlags.birthdaySent': false,
           'notificationFlags.stepsGoalSent': false,
           'notificationFlags.caloriesGoalSent': false
@@ -106,6 +108,7 @@ exports.resetDaily = async (req, res) => {
       message: 'Dzienne dane zostały zresetowane',
       user: {
         zrKroki: user.zrKroki,
+        lastSyncDate: user.lastSyncDate,
         eatenProducts: user.eatenProducts,
         notificationFlags: user.notificationFlags
       }

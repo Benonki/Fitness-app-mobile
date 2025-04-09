@@ -77,8 +77,7 @@ exports.updateNotificationFlag = async (req, res) => {
     }
 
     res.json({
-      message: 'Flaga powiadomienia została zaktualizowana',
-      user
+      message: 'Flaga powiadomienia została zaktualizowana'
     });
   } catch (error) {
     console.error('Błąd podczas aktualizacji flagi powiadomienia:', error);

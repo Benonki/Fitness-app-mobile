@@ -11,7 +11,7 @@ export const loadStepData = async (userId) => {
     }
 };
 
-export const saveSteps = async (userId, newSteps, lastSavedStep) => {
+export const saveSteps = async (userId, newSteps) => {
     try {
         await axiosInstance.patch(`/steps/${userId}/update`, { zrKroki: newSteps });
         return newSteps;

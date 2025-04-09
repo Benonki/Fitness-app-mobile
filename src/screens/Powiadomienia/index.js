@@ -13,7 +13,7 @@ const PowiadomieniaScreen = () => {
         if (user?.id) {
             loadUserNotifications(user.id);
         }
-    }, [user?.id]);
+    }, [user?.id], [user?.notifications]);
 
     const userNotifications = notifications[user?.id] || [];
 
