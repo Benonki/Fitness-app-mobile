@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity, Modal, TextInput, Alert } from 'react-native';
 import { useContext, useState } from 'react';
 import styles from './StyleSheet.js';
-import { ProductContext } from '../../context/ProductContext/ProductContext';
+import { ProductContext } from '../../context/ProductContext';
 
 const NUTRI_SCORE_IMAGES = {
   a: require('../../../assets/NtrScore/nutriScoreA.png'),

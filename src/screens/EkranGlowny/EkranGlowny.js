@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { Text, View, TouchableOpacity, Image } from "react-native";
 import styles from './StyleSheet.js';
 import Svg, { Defs, LinearGradient as SvgLinearGradient, Stop, Text as SvgText } from 'react-native-svg';
-import { useNotifications } from "../../context/NotificationContext/NotificationContext";
-import { UserContext } from "../../context/UserContext/UserContext";
+import { useNotifications } from "../../context/NotificationContext";
+import { UserContext } from "../../context/UserContext";
 import { setNotificationFlag } from '../../api/notifications';
 import { handleLogout } from '../../api/auth'
 

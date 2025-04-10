@@ -4,7 +4,7 @@ import { Picker } from '@react-native-picker/picker';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import * as ImagePicker from 'expo-image-picker';
 import { Image } from 'react-native';
-import { UserContext } from '../../context/UserContext/UserContext';
+import { UserContext } from '../../context/UserContext';
 import styles from './StyleSheet.js';
 import * as FileSystem from 'expo-file-system';
 import { getUserData, updateUserData } from '../../api/accounts';

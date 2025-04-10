@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext } from 'react';
-import { loadNotifications, addNotification, deleteNotification } from '../../api/notifications';
+import { loadNotifications, addNotification, deleteNotification } from '../api/notifications';
 
 const NotificationsContext = createContext();
 

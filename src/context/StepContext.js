@@ -1,10 +1,10 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { PermissionsAndroid, Platform } from 'react-native';
 import { Pedometer } from 'expo-sensors';
-import { UserContext } from '../UserContext/UserContext';
-import { loadStepData, saveSteps } from '../../api/steps';
-import { useNotifications } from "../NotificationContext/NotificationContext";
-import { setNotificationFlag } from "../../api/notifications";
+import { UserContext } from './UserContext';
+import { loadStepData, saveSteps } from '../api/steps';
+import { useNotifications } from "./NotificationContext";
+import { setNotificationFlag } from "../api/notifications";
 
 export const StepContext = createContext();
 

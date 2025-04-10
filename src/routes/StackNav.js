@@ -1,12 +1,12 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
-import LoginScreen from "../../screens/Login/Login";
-import RejestracjaScreen from "../../screens/Rejestracja/Rejestracja";
-import OpisTreninguScreen from "../../screens/OpisTreningu/OpisTreningu";
-import InformacjaScreen from "../../screens/Informacje/Informacje";
-import DrawerNav from "../DrawerNav/DraweNav";
-import WyszukiwarkaScreen from '../../screens/Wyszukiwarka/Wyszukiwarka';
-import DodaneProduktyScreen from '../../screens/DodaneProdukty/DodaneProdukty';
+import LoginScreen from "../screens/Login/Login";
+import RejestracjaScreen from "../screens/Rejestracja/Rejestracja";
+import OpisTreninguScreen from "../screens/OpisTreningu/OpisTreningu";
+import InformacjaScreen from "../screens/Informacje/Informacje";
+import DrawerNav from "./DraweNav";
+import WyszukiwarkaScreen from '../screens/Wyszukiwarka/Wyszukiwarka';
+import DodaneProduktyScreen from '../screens/DodaneProdukty/DodaneProdukty';
 
 const Stack = createNativeStackNavigator();
 

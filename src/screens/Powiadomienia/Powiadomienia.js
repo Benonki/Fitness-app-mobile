@@ -1,7 +1,7 @@
 import { View, FlatList, Text } from 'react-native';
 import styles from './StyleSheet.js';
-import { useNotifications } from "../../context/NotificationContext/NotificationContext";
-import { UserContext } from "../../context/UserContext/UserContext";
+import { useNotifications } from "../../context/NotificationContext";
+import { UserContext } from "../../context/UserContext";
 import { ListItem, Icon } from 'react-native-elements';
 import { useContext, useEffect } from "react";
 

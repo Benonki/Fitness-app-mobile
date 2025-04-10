@@ -3,7 +3,7 @@ import { View, TextInput, ActivityIndicator, Text, TouchableOpacity } from 'reac
 import { Snackbar, Checkbox } from 'react-native-paper';
 import Svg, { Defs, LinearGradient as SvgLinearGradient, Stop, Text as SvgText } from 'react-native-svg';
 import styles from './StyleSheet.js';
-import { UserContext } from '../../context/UserContext/UserContext';
+import { UserContext } from '../../context/UserContext';
 import { checkStoredData, handleLogin } from '../../api/auth';
 
 const LoginScreen = ({ navigation }) => {
