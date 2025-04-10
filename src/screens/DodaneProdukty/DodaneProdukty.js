@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Modal, TextInput, Alert } from 'react-native';
-import { ProductContext } from '../../context/ProductContext';
+import { ProductContext } from '../../context/ProductContext/ProductContext';
 import { AntDesign } from '@expo/vector-icons';
 import styles from './StyleSheet.js';
 

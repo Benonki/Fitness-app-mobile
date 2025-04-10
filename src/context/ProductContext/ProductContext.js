@@ -1,7 +1,7 @@
 import React, {createContext, useState, useEffect, useContext, useRef, useCallback} from 'react';
-import { UserContext } from '../UserContext';
+import { UserContext } from '../UserContext/UserContext';
 import { loadProductsFromAPI, updateUserProducts } from '../../api/eatedProducts';
-import { useNotifications } from "../NotificationContext";
+import { useNotifications } from "../NotificationContext/NotificationContext";
 import { setNotificationFlag } from "../../api/notifications";
 
 export const ProductContext = createContext();

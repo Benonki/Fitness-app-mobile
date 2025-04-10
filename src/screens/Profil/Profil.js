@@ -4,11 +4,11 @@ import { Picker } from '@react-native-picker/picker';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import * as ImagePicker from 'expo-image-picker';
 import { Image } from 'react-native';
-import { UserContext } from '../../context/UserContext';
+import { UserContext } from '../../context/UserContext/UserContext';
 import styles from './StyleSheet.js';
 import * as FileSystem from 'expo-file-system';
-import * as SecureStore from 'expo-secure-store';
 import { getUserData, updateUserData } from '../../api/accounts';
+import { handleLogout } from '../../api/auth'
 
 const ProfilScreen = ({ navigation }) => {
     const { user, setUser } = useContext(UserContext);
@@ -118,17 +118,8 @@ const ProfilScreen = ({ navigation }) => {
         }
     };
 
-    const handleLogout = async () => {
-        try {
-            await SecureStore.deleteItemAsync('userToken');
-            await SecureStore.deleteItemAsync('userLogin');
-            await SecureStore.deleteItemAsync('AutoLoginMode');
-            setUser(null);
-            navigation.navigate('Login');
-        } catch (error) {
-            Alert.alert('Błąd', 'Nie udało się wylogować użytkownika.');
-            console.error('Błąd podczas wylogowywania:', error);
-        }
+    const handleLogoutPress = () => {
+        handleLogout(setUser, navigation);
     };
 
     if (!userData) {
@@ -293,7 +284,7 @@ const ProfilScreen = ({ navigation }) => {
                     <Text style={styles.buttonText}>Zapisz zmiany</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.button} onPress={handleLogout}>
+                <TouchableOpacity style={styles.button} onPress={handleLogoutPress}>
                     <Text style={styles.buttonText}>Wyloguj się</Text>
                 </TouchableOpacity>
             </ScrollView>

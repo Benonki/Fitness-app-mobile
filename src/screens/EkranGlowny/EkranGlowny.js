@@ -1,12 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Text, View, TouchableOpacity, Image, Alert } from "react-native";
+import { Text, View, TouchableOpacity, Image } from "react-native";
 import styles from './StyleSheet.js';
 import Svg, { Defs, LinearGradient as SvgLinearGradient, Stop, Text as SvgText } from 'react-native-svg';
-import * as SecureStore from "expo-secure-store";
-import { useNotifications } from "../../context/NotificationContext";
-import { UserContext } from "../../context/UserContext";
-import { resetDaily } from '../../api/accounts';
+import { useNotifications } from "../../context/NotificationContext/NotificationContext";
+import { UserContext } from "../../context/UserContext/UserContext";
 import { setNotificationFlag } from '../../api/notifications';
+import { handleLogout } from '../../api/auth'
 
 const EkranGlownyScreen = ({ navigation }) => {
 
@@ -25,24 +24,6 @@ const EkranGlownyScreen = ({ navigation }) => {
             setUserNotificationCount(notifications[user.id].length);
         }
     }, [notifications, user?.id]);
-
-    useEffect(() => {
-        const checkDateAndReset = async () => {
-            if (!user) return;
-
-            try {
-                const today = new Date().toISOString().split('T')[0];
-                const userSyncDate = new Date(user.lastSyncDate).toISOString().split('T')[0];
-                if (userSyncDate !== today) {
-                    await resetDaily(user.id);
-                }
-            } catch (error) {
-                console.error('Błąd podczas resetowania danych:', error);
-            }
-        };
-
-        checkDateAndReset();
-    }, [user]);
 
     useEffect(() => {
         if(!user) return;
@@ -74,17 +55,8 @@ const EkranGlownyScreen = ({ navigation }) => {
         sendBirthdayNotification();
     }, [user]);
 
-    const handleLogout = async () => {
-        try {
-            await SecureStore.deleteItemAsync('userToken');
-            await SecureStore.deleteItemAsync('userLogin');
-            await SecureStore.deleteItemAsync('AutoLoginMode');
-            setUser(null);
-            navigation.navigate('Login');
-        } catch (error) {
-            Alert.alert('Błąd', 'Nie udało się wylogować użytkownika.');
-            console.error('Błąd podczas wylogowywania:', error);
-        }
+    const handleLogoutPress = () => {
+        handleLogout(setUser, navigation);
     };
 
     return (
@@ -148,7 +120,7 @@ const EkranGlownyScreen = ({ navigation }) => {
                     <Image source={require('../../../assets/EkrGlZdj/Profil.png')} style={styles.image} />
                     <Text style={styles.label}>Profil</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={handleLogout}>
+                <TouchableOpacity style={styles.button} onPress={handleLogoutPress}>
                     <Image source={require('../../../assets/EkrGlZdj/Wylogowanie.png')} style={styles.image} />
                     <Text style={styles.label}>Wyloguj się</Text>
                 </TouchableOpacity>

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import StackNav from "./src/routes/StackNav";
-import { StepProvider } from './src/context/StepContext';
-import { NotificationsProvider } from './src/context/NotificationContext';
-import { ProductProvider } from './src/context/ProductContext';
-import { UserProvider } from './src/context/UserContext';
+import StackNav from "./src/routes/StackNav/StackNav";
+import { StepProvider } from './src/context/StepContext/StepContext';
+import { NotificationsProvider } from './src/context/NotificationContext/NotificationContext';
+import { ProductProvider } from './src/context/ProductContext/ProductContext';
+import { UserProvider } from './src/context/UserContext/UserContext';
 import { LogBox } from 'react-native';
 
 

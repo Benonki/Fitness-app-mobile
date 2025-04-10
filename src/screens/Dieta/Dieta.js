@@ -1,10 +1,10 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Text, View, TouchableOpacity  } from 'react-native';
 import CircularProgress from "react-native-circular-progress-indicator";
-import { StepContext } from '../../context/StepContext';
-import { ProductContext } from '../../context/ProductContext';
+import { StepContext } from '../../context/StepContext/StepContext';
+import { ProductContext } from '../../context/ProductContext/ProductContext';
 import styles from './StyleSheet.js';
-import { UserContext } from '../../context/UserContext';
+import { UserContext } from '../../context/UserContext/UserContext';
 
 const DietaScreen = ({ navigation }) => {
     const { user} = useContext(UserContext);

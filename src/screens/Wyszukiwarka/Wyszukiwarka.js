@@ -3,7 +3,7 @@ import { Text, View, TextInput, FlatList, Image, TouchableOpacity, ActivityIndic
 import { CameraView } from 'expo-camera';
 import Icon from 'react-native-vector-icons/Ionicons';
 import styles from './StyleSheet.js';
-import { UserContext } from '../../context/UserContext';
+import { UserContext } from '../../context/UserContext/UserContext';
 import { Audio } from 'expo-av';
 import { fetchSearchResultsFromAPI, fetchDietProductsFromAPI, fetchProductDataFromAPI } from '../../api/products';
 
