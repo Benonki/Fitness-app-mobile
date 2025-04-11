@@ -1,4 +1,4 @@
-import axiosInstance from './axiosInstance';
+import axiosInstance, { setTemporaryToken } from './axiosInstance';
 import { checkAndResetDailyData } from "./accounts";
 import * as SecureStore from 'expo-secure-store';
 import { Alert } from "react-native";
@@ -7,9 +7,8 @@ export const checkStoredData = async (setUser, navigation, setLoading) => {
     try {
         const token = await SecureStore.getItemAsync('userToken');
         const storedLogin = await SecureStore.getItemAsync('userLogin');
-        const AutologinMode = await SecureStore.getItemAsync('AutoLoginMode');
 
-        if (token && storedLogin && AutologinMode === 'true') {
+        if (token && storedLogin) {
             const response = await axiosInstance.get(`/auth?login=${storedLogin}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -32,9 +31,12 @@ export const handleLogin = async (login, password, setUser, setMessage, setVisib
     try {
         const response = await axiosInstance.post('/auth/login', { login, password });
         const { token, user } = response.data;
-        await SecureStore.setItemAsync('userToken', token);
-        await SecureStore.setItemAsync('userLogin', user.login);
-        if(autoLogin) await SecureStore.setItemAsync('AutoLoginMode', 'true');
+        if(autoLogin) {
+            await SecureStore.setItemAsync('userToken', token);
+            await SecureStore.setItemAsync('userLogin', user.login);
+        } else {
+            setTemporaryToken(token);
+        }
         const userWithReset = await checkAndResetDailyData(user.id, user);
         setUser(userWithReset);
         navigation.navigate('DrawerNav');
@@ -65,7 +67,6 @@ export const handleLogout = async (setUser, navigation) => {
                                 await Promise.all([
                                     SecureStore.deleteItemAsync('userToken'),
                                     SecureStore.deleteItemAsync('userLogin'),
-                                    SecureStore.deleteItemAsync('AutoLoginMode'),
                                 ]);
 
                                 if (setUser) setUser(null);

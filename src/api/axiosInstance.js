@@ -6,8 +6,13 @@ const axiosInstance = axios.create({
     timeout: 5000,
 });
 
+let temporaryToken = null;
+
 axiosInstance.interceptors.request.use(async (config) => {
-    const token = await SecureStore.getItemAsync('userToken');
+    let token = await SecureStore.getItemAsync('userToken');
+    if (!token && temporaryToken) {
+        token = temporaryToken;
+    }
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
@@ -15,5 +20,9 @@ axiosInstance.interceptors.request.use(async (config) => {
 }, (error) => {
     return Promise.reject(error);
 });
+
+export const setTemporaryToken = (token) => {
+    temporaryToken = token;
+};
 
 export default axiosInstance;
