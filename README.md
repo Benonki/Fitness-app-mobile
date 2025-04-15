@@ -1,6 +1,6 @@
 # Fitness App Mobile
 
-A fitness mobile app built with JavaScript and React Native that tracks steps, calories, and more, powered by an Express.js backend with MongoDB.
+A fitness mobile app built with JavaScript and React Native that tracks steps, calories, and more, powered by an Express.js backend with Node.js and MongoDB as a database.
 
 ## Requirements
 
@@ -11,28 +11,24 @@ A fitness mobile app built with JavaScript and React Native that tracks steps, c
  	```bash
  	git clone https://github.com/Benonki/Fitness-app-mobile.git
  	```
-2. Enter into project:
-   ```bash
-   cd Fitness-app-mobile
-    ```
-3. Install dependencies:
+2. Install dependencies:
    ```bash
    npm i
    ```
-4. Enter into backend:
+3. Enter into backend:
 	```bash
 	cd backend
 	 ```
-5. Install Server dependencies:
+4. Install Server dependencies:
 	```bash
 	npm i
 	```
-6. Select one of the following database usage versions:
+5. Select one of the following database usage versions:
 ### - MongoDB Version
 1. Install <a href="https://www.mongodb.com/try/download/community" target="_blank"> MongoDB </a>on your PC.
-2. After installation you need to add /bin path to environment PATH variables, default path to /bin should be:
+2. After installation you need to add `/bin` path to environment PATH variables, default path to `/bin` should be:
    ```bash
-    C:\Program Files\MongoDB\Server\<wersja>\bin
+    C:\Program Files\MongoDB\Server\<version>\bin
     ```
 
 ### - Docker Version
@@ -50,10 +46,10 @@ A fitness mobile app built with JavaScript and React Native that tracks steps, c
    docker start fitness-mongo
    ```
 ## Running the App
-1. Change the IP in src/api/axiosInstance.js to your computer's local IPv4 (You have to be in the same network on your phone and computer for this to work).
-2. Change the IP in backend/app.js to your computer's local IPv4 but only first 3 octets.
-3. You can change default key, key expiration date, server port and mongoDB connection in .env file in /backend
-4. Open console nr 1 and get into /backend:
+1. Change the IP in `src/api/axiosInstance.js` to your computer's local IPv4 (You have to be in the same network on your phone and computer for this to work).
+2. Change the IP in `backend/app.js` to your computer's local IPv4 but only first 3 octets.
+3. You can change default key, key expiration date, server port and mongoDB connection in `.env` file in `/backend`
+4. Open console nr 1 and get into `/backend`:
 	```bash
 	cd backend
     ```

@@ -16,7 +16,7 @@ const WyszukiwarkaScreen = ({ navigation }) => {
   const [ dietProducts, setDietProducts ] = useState([]);
   const [ cameraVisible, setCameraVisible ] = useState(false);
   const [ scanned, setScanned ] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [ loading, setLoading ] = useState(false);
 
   useEffect(() => {
     if (user) {
