@@ -2,11 +2,11 @@
 
 A fitness mobile app built with JavaScript and React Native that tracks steps, calories, and more, powered by an Express.js backend with Node.js and MongoDB as a database.
 
-## Requirements
+## 📝 Requirements
 
 - <a href="https://nodejs.org/en" target="_blank">Node.js</a> installed on your computer.
 
-## Setup
+## ⚙️ Setup
 1. Clone the repository:
  	```bash
  	git clone https://github.com/Benonki/Fitness-app-mobile.git
@@ -45,7 +45,7 @@ A fitness mobile app built with JavaScript and React Native that tracks steps, c
    ```bash
    docker start fitness-mongo
    ```
-## Running the App
+## 🚀 Running the App
 1. Change the IP in `src/api/axiosInstance.js` to your computer's local IPv4 (You have to be in the same network on your phone and computer for this to work).
 2. Change the IP in `backend/app.js` to your computer's local IPv4 but only first 3 octets.
 3. You can change default key, key expiration date, server port and mongoDB connection in `.env` file in `/backend`
