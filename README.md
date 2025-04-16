@@ -63,7 +63,7 @@ A fitness mobile app built with JavaScript and React Native that tracks steps, c
     ```
 7. You can either open http://localhost:8081/ on your PC, use the phone emulator, or scan the QR code (Recommended!!!) with Expo Go app on your phone (it needs to be SDK 51).
 
-## Showcase
+## 🖼️ Showcase
 
 <div align="center">
   <img src="https://github.com/Benonki/Portfolio/blob/main/StronaGlowna/sc/FitApp.png" alt="Preview of My Project">
