@@ -1,12 +1,9 @@
-const User = require('../models/User');
+const notificationsService = require('../services/notificationsService');
 
 exports.getNotifications = async (req, res) => {
   try {
-    const user = req.user;
-    if (!user) {
-      return res.status(404).json({ message: 'Uzytkownik nie znaleziony' });
-    }
-    res.json(user.notifications || []);
+    const notifications = await notificationsService.getNotifications(req.user._id);
+    res.json(notifications);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -15,24 +12,8 @@ exports.getNotifications = async (req, res) => {
 exports.addNotification = async (req, res) => {
   try {
     const { title, message } = req.body;
-    const newNotification = {
-      id: Date.now(),
-      title,
-      message,
-      date: new Date().toISOString()
-    };
-
-    const user = await User.findByIdAndUpdate(
-        req.user._id,
-        { $push: { notifications: newNotification } },
-        { new: true }
-    );
-
-    if (!user) {
-      return res.status(404).json({ message: 'Uzytkownik nie znaleziony' });
-    }
-
-    res.json(user.notifications);
+    const notifications = await notificationsService.addNotification(req.user._id, title, message);
+    res.json(notifications);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -41,20 +22,8 @@ exports.addNotification = async (req, res) => {
 exports.deleteNotification = async (req, res) => {
   try {
     const { notificationId } = req.params;
-    const user = req.user;
-    if (!user) {
-      return res.status(404).json({ message: 'Uzytkownik nie znaleziony' });
-    }
-    const updatedUser = await User.findByIdAndUpdate(
-        req.user._id,
-        { $pull: { notifications: { id: Number(notificationId) } } },
-        { new: true }
-    );
-    if (!updatedUser) {
-      return res.status(404).json({ message: 'Uzytkownik nie znaleziony' });
-    }
-
-    res.json(updatedUser.notifications);
+    const notifications = await notificationsService.deleteNotification(req.user._id, notificationId);
+    res.json(notifications);
   } catch (error) {
     console.error('Błąd usuwania powiadomienia:', error.message);
     res.status(400).json({ message: error.message });
@@ -64,18 +33,7 @@ exports.deleteNotification = async (req, res) => {
 exports.updateNotificationFlag = async (req, res) => {
   try {
     const { flagName, value } = req.body;
-    const update = { [`notificationFlags.${flagName}`]: value };
-
-    const user = await User.findByIdAndUpdate(
-        req.user._id,
-        { $set: update },
-        { new: true }
-    );
-
-    if (!user) {
-      return res.status(404).json({ message: 'Użytkownik nie znaleziony' });
-    }
-
+    await notificationsService.updateNotificationFlag(req.user._id, flagName, value);
     res.json({
       message: 'Flaga powiadomienia została zaktualizowana'
     });
