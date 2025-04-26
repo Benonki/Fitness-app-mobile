@@ -5,7 +5,6 @@ export const getUserData = async (userId) => {
         const response = await axiosInstance.get(`/users/${userId}`);
         const userData = response.data;
 
-        // Wyciągamy baseURL i usuwamy '/api' z końca
         const rawBaseUrl = axiosInstance.defaults.baseURL.replace(/\/api\/?$/, '');
 
         if (userData.imageUri && !userData.imageUri.startsWith('http')) {

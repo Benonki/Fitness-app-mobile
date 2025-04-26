@@ -20,9 +20,9 @@ export const checkStoredData = async (setUser, navigation, setLoading) => {
                     navigation.navigate('DrawerNav');
                 }
             } catch (error) {
-                console.error('Błąd podczas autologowania:', error);
                 await SecureStore.deleteItemAsync('userToken');
                 await SecureStore.deleteItemAsync('userLogin');
+                console.error('Błąd podczas autologowania:', error);
 
                 if (error.response?.status === 401) {
                     Alert.alert('Sesja wygasła', 'Zaloguj się ponownie');
@@ -30,6 +30,8 @@ export const checkStoredData = async (setUser, navigation, setLoading) => {
             }
         }
     } catch (error) {
+        await SecureStore.deleteItemAsync('userToken');
+        await SecureStore.deleteItemAsync('userLogin');
         console.error('Błąd podczas sprawdzania danych:', error);
     } finally {
         setLoading(false);
