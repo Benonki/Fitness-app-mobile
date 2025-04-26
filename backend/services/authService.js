@@ -2,10 +2,27 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-exports.getUserInfo = async (userLogin) => {
+exports.verifyToken = async (token) => {
+    if (!token) {
+        throw new Error('Brak tokena autoryzacyjnego');
+    }
+
+    try {
+        return jwt.verify(token, process.env.JWT_SECRET);
+    } catch (error) {
+        if (error.name === 'TokenExpiredError') {
+            throw new Error('Token wygasł');
+        }
+        throw new Error('Nieprawidłowy token');
+    }
+};
+
+exports.getUserInfo = async (userLogin, token) => {
     if (!userLogin) {
         throw new Error('Login użytkownika jest wymagany');
     }
+
+    await this.verifyToken(token);
 
     const user = await User.findOne({ login: userLogin });
     if (!user) {

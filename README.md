@@ -15,6 +15,10 @@ A fitness mobile app built with JavaScript and React Native that tracks steps, c
    ```bash
    npm i
    ```
+   - In case of any `high` vulnerabilities:
+      ```bash
+      npm audit fix
+       ```
 3. Enter into backend:
 	```bash
 	cd backend

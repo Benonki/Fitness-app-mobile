@@ -9,19 +9,28 @@ export const checkStoredData = async (setUser, navigation, setLoading) => {
         const storedLogin = await SecureStore.getItemAsync('userLogin');
 
         if (token && storedLogin) {
-            const response = await axiosInstance.get(`/auth?login=${storedLogin}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            try {
+                const response = await axiosInstance.get(`/auth?login=${storedLogin}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
 
-            if (response.data) {
-                const userWithReset = await checkAndResetDailyData(response.data.id, response.data)
-                setUser(userWithReset);
-                navigation.navigate('DrawerNav');
+                if (response.data) {
+                    const userWithReset = await checkAndResetDailyData(response.data.id, response.data)
+                    setUser(userWithReset);
+                    navigation.navigate('DrawerNav');
+                }
+            } catch (error) {
+                console.error('Błąd podczas autologowania:', error);
+                await SecureStore.deleteItemAsync('userToken');
+                await SecureStore.deleteItemAsync('userLogin');
+
+                if (error.response?.status === 401) {
+                    Alert.alert('Sesja wygasła', 'Zaloguj się ponownie');
+                }
             }
         }
     } catch (error) {
-        console.error('Błąd podczas autologowania:', error);
-        await SecureStore.deleteItemAsync('userToken');
+        console.error('Błąd podczas sprawdzania danych:', error);
     } finally {
         setLoading(false);
     }

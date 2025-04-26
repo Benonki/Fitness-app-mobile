@@ -33,8 +33,12 @@ export const StepProvider = ({ children }) => {
     const startSaveInterval = (userId) => {
         saveInterval.current = setInterval(async () => {
             if (latestStepsToSave.current > 0) {
-                await saveSteps(userId, latestStepsToSave.current);
-                latestStepsToSave.current = 0;
+                try {
+                    await saveSteps(userId, latestStepsToSave.current);
+                    latestStepsToSave.current = 0;
+                } catch (error) {
+                    console.error('Błąd podczas zapisu kroków:', error);
+                }
             }
         }, 60000); // 60 sekund
     };

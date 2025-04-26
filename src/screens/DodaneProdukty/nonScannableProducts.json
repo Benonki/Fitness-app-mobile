@@ -1,0 +1,179 @@
+{
+  "nonScannableProducts": [
+    {
+      "name": "jabłko",
+      "calories": 52,
+      "fat": 0.2,
+      "sugar": 10,
+      "proteins": 0.3
+    },
+    {
+      "name": "banan",
+      "calories": 89,
+      "fat": 0.3,
+      "sugar": 12,
+      "proteins": 1.1
+    },
+    {
+      "name": "tosty z serem",
+      "calories": 300,
+      "fat": 12,
+      "sugar": 2,
+      "proteins": 15
+    },
+    {
+      "name": "kanapka z szynką",
+      "calories": 250,
+      "fat": 8,
+      "sugar": 3,
+      "proteins": 18
+    },
+    {
+      "name": "omlet",
+      "calories": 154,
+      "fat": 11,
+      "sugar": 1.7,
+      "proteins": 10.6
+    },
+    {
+      "name": "sałatka owocowa",
+      "calories": 120,
+      "fat": 0.5,
+      "sugar": 25,
+      "proteins": 1.5
+    },
+    {
+      "name": "jajko na twardo",
+      "calories": 155,
+      "fat": 11,
+      "sugar": 1.1,
+      "proteins": 13
+    },
+    {
+      "name": "owsianka na mleku",
+      "calories": 200,
+      "fat": 5,
+      "sugar": 8,
+      "proteins": 7
+    },
+    {
+      "name": "domowa zupa pomidorowa",
+      "calories": 150,
+      "fat": 6,
+      "sugar": 10,
+      "proteins": 4
+    },
+    {
+      "name": "gruszka",
+      "calories": 57,
+      "fat": 0.1,
+      "sugar": 12,
+      "proteins": 0.4
+    },
+    {
+      "name": "jogurt naturalny",
+      "calories": 59,
+      "fat": 3.3,
+      "sugar": 4.7,
+      "proteins": 3.5
+    },
+    {
+      "name": "placki ziemniaczane",
+      "calories": 220,
+      "fat": 10,
+      "sugar": 2,
+      "proteins": 4
+    },
+    {
+      "name": "kawa latte",
+      "calories": 120,
+      "fat": 5,
+      "sugar": 10,
+      "proteins": 6
+    },
+    {
+      "name": "herbata z miodem",
+      "calories": 64,
+      "fat": 0,
+      "sugar": 17,
+      "proteins": 0
+    },
+    {
+      "name": "domowe ciasto czekoladowe",
+      "calories": 350,
+      "fat": 18,
+      "sugar": 30,
+      "proteins": 5
+    },
+    {
+      "name": "pieczony kurczak",
+      "calories": 239,
+      "fat": 14,
+      "sugar": 0,
+      "proteins": 27
+    },
+    {
+      "name": "ryż z warzywami",
+      "calories": 210,
+      "fat": 3,
+      "sugar": 1,
+      "proteins": 5
+    },
+    {
+      "name": "makaron z sosem pomidorowym",
+      "calories": 220,
+      "fat": 5,
+      "sugar": 6,
+      "proteins": 7
+    },
+    {
+      "name": "gotowane ziemniaki",
+      "calories": 86,
+      "fat": 0.1,
+      "sugar": 0.8,
+      "proteins": 1.7
+    },
+    {
+      "name": "sok pomarańczowy świeżo wyciskany",
+      "calories": 45,
+      "fat": 0.2,
+      "sugar": 8,
+      "proteins": 0.7
+    },
+    {
+      "name": "domowy burger",
+      "calories": 295,
+      "fat": 14,
+      "sugar": 3,
+      "proteins": 26
+    },
+    {
+      "name": "sałatka grecka",
+      "calories": 180,
+      "fat": 12,
+      "sugar": 4,
+      "proteins": 8
+    },
+    {
+      "name": "gotowana marchewka",
+      "calories": 41,
+      "fat": 0.2,
+      "sugar": 4.7,
+      "proteins": 0.9
+    },
+    {
+      "name": "pieczone jabłko z cynamonem",
+      "calories": 95,
+      "fat": 0.3,
+      "sugar": 20,
+      "proteins": 0.5
+    },
+    {
+      "name": "domowy kompot",
+      "calories": 60,
+      "fat": 0,
+      "sugar": 15,
+      "proteins": 0
+    }
+  ]
+}

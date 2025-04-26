@@ -1,11 +1,11 @@
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { LinearGradient } from 'expo-linear-gradient';
-import EkranGlownyScreen from "../screens/EkranGlowny/EkranGlowny";
-import ProfilScreen from "../screens/Profil/Profil";
-import TreningScreen from "../screens/Trening/Trening";
-import DietaScreen from "../screens/Dieta/Dieta";
-import WyszukiwarkaScreen from "../screens/Wyszukiwarka/Wyszukiwarka";
-import PowiadomieniaScreen from "../screens/Powiadomienia/Powiadomienia";
+import EkranGlownyScreen from "../screens/EkranGlowny";
+import ProfilScreen from "../screens/Profil";
+import TreningScreen from "../screens/Trening";
+import DietaScreen from "../screens/Dieta";
+import WyszukiwarkaScreen from "../screens/Wyszukiwarka";
+import PowiadomieniaScreen from "../screens/Powiadomienia";
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useNotifications } from '../context/NotificationContext';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';

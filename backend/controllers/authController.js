@@ -2,11 +2,16 @@ const authService = require('../services/authService');
 
 exports.getUserInfo = async (req, res) => {
   try {
+    const token = req.headers.authorization?.split(' ')[1];
     const userLogin = req.query.login;
-    const user = await authService.getUserInfo(userLogin);
+    const user = await authService.getUserInfo(userLogin, token);
     res.json(user);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    if (error.message === 'Token wygasł' || error.message === 'Nieprawidłowy token' || error.message === 'Brak tokena autoryzacyjnego') {
+      res.status(401).json({ message: error.message });
+    } else {
+      res.status(500).json({ message: error.message });
+    }
   }
 };
 

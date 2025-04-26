@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     bottom: 20,
     backgroundColor: '#11D9EF',
     width: 160,
-    height: 60,
+    height: 70,
     borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#000',
     fontWeight: 'bold',
-    marginBottom : 5,
+    marginBottom: 5,
     textAlign: 'center',
   },
   modalContainer: {
@@ -104,6 +104,37 @@ const styles = StyleSheet.create({
     marginTop: 5,
     textAlign: 'center',
   },
+  tabSwitchContainer: {
+    flexDirection: 'row',
+    width: '100%',
+    borderWidth: 1,
+    borderColor: '#000',
+    borderRadius: 10,
+    overflow: 'hidden',
+    marginVertical: 10,
+    height: 50,
+  },
+  tabSwitchButton: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    paddingHorizontal: 5,
+  },
+  tabSwitchButtonActive: {
+    backgroundColor: '#11D9EF',
+  },
+  tabSwitchButtonText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  tabSwitchDivider: {
+    width: 1,
+    backgroundColor: '#000',
+    height: '100%',
+  },
+
   input: {
     width: '100%',
     padding: 10,
@@ -164,6 +195,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  productTileDetails: {
+    fontSize: 12,
+    color: '#666',
+    marginTop: 4,
+  },
+  productListContainer: {
+    maxHeight: 300,
+    width: '100%',
+    marginVertical: 10,
+  },
+  selectedProductTile: {
+    borderColor: '#11D9EF',
+    borderWidth: 2,
+  }
 });
 
 export default styles;
